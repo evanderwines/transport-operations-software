@@ -104,7 +104,7 @@ const TaskDetails = () => {
                 (err) => console.error("Geolocation error:", err),
                 { enableHighAccuracy: true }
             );
-        }, 1000); 
+        }, 5000); 
 
         return () => clearInterval(interval);
     }, []);
