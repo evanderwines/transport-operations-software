@@ -55,14 +55,19 @@ const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
 
 
 
-        const channel = window.Echo.channel("vehicles");
+        const echo = (window as any).Echo;
+        if (!echo || typeof echo.channel !== "function") {
+            return;
+        }
+
+        const channel = echo.channel("vehicles");
 
         channel.listen(".VehicleLocationUpdated", (e: VehicleLocation) => {
             setVehicleLoc(new LatLng(e.lat, e.lng));
         });
 
         return () => {
-            try { (window as any).Echo.leaveChannel("vehicles"); } catch { }
+            try { echo.leaveChannel("vehicles"); } catch { }
         };
 
     }, []);
