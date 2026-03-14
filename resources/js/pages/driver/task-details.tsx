@@ -87,26 +87,26 @@ const TaskDetails = () => {
     useEffect(() => {
 
 
-        // const interval = setInterval(() => {
-        //     navigator.geolocation.getCurrentPosition(
-        //         (pos) => {
-        //             const { latitude, longitude } = pos.coords;
-        //             //setPosition(new LatLng(latitude, longitude));
+        const interval = setInterval(() => {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const { latitude, longitude } = pos.coords;
+                    setPosition(new LatLng(latitude, longitude));
 
-        //             console.log(pos);
+                    console.log(pos);
 
-        //             axios.post(update().url, {
-        //                 vehicle_id: props.reservation.dispatch.vehicle_id,
-        //                 latitude,
-        //                 longitude,
-        //             }).catch(console.error);
-        //         },
-        //         (err) => console.error("Geolocation error:", err),
-        //         { enableHighAccuracy: true }
-        //     );
-        // }, 1000); 
+                    axios.post(update().url, {
+                        vehicle_id: props.reservation.dispatch.vehicle_id,
+                        latitude,
+                        longitude,
+                    }).catch(console.error);
+                },
+                (err) => console.error("Geolocation error:", err),
+                { enableHighAccuracy: true }
+            );
+        }, 1000); 
 
-        // return () => clearInterval(interval);
+        return () => clearInterval(interval);
     }, []);
 
 
