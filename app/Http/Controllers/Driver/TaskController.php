@@ -8,6 +8,7 @@ use App\Models\Dispatch;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 use App\Events\VehicleLocationUpdated;
 
@@ -43,11 +44,23 @@ class TaskController extends Controller
 
     public function update(Request $request)
     {
-        broadcast(new VehicleLocationUpdated(
-            $request->vehicle_id,
-            $request->latitude,
-            $request->longitude
-        ));
+        try {
+            broadcast(new VehicleLocationUpdated(
+                $request->vehicle_id,
+                $request->latitude,
+                $request->longitude
+            )); 
+
+            Log::info('Reverb broadcast OK', [
+                'channel' => 'vehicles',
+                'event' => 'VehicleLocationUpdated',
+                'vehicle_id' => $request->vehicle_id,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Reverb broadcast FAILED', [
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function updateStatus(Request $request, $reservation_id)
