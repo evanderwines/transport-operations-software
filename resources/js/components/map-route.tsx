@@ -63,6 +63,7 @@ const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
         const channel = echo.channel("vehicles");
 
         channel.listen(".VehicleLocationUpdated", (e: VehicleLocation) => {
+            console.log(e)
             setVehicleLoc(new LatLng(e.lat, e.lng));
         });
 
@@ -95,7 +96,7 @@ const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
                             <RoutePolyline routePoints={routePoints} driverPos={vehicleLoc} setBounds={setBounds} />
                         )}
 
-                        {/* {vehicleLoc && <LiveVehicleLocation vehicleLoc={vehicleLoc} />} */}
+                        {vehicleLoc && <LiveVehicleLocation vehicleLoc={vehicleLoc} />}
 
                         <Marker position={waypoints[0]} />
                         <Marker position={waypoints[1]} />
