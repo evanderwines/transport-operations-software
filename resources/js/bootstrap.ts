@@ -10,7 +10,7 @@ declare global {
 
 window.Pusher = Pusher;
 
-const reverbKey = import.meta.env.VITE_REVERB_APP_KEY;
+const reverbKey = 'cfvbmtogk4rzm2nh7ijt'
 if (reverbKey) {
     window.Echo = new Echo({
         broadcaster: 'reverb',

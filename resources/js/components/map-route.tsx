@@ -44,7 +44,7 @@ const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
         // }, 500)
 
         getRoutes(
-            waypoints
+            waypoints   
         )
             .then(res => {
                 setRoutePoints(res);
