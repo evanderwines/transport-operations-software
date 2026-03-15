@@ -34,6 +34,7 @@ window.Echo = new Echo({
   forceTLS: true,
   useTLS: true,
   enabledTransports: ['wss'],
+  authEndpoint: '',
   // This prevents the sockjs fallback:
   disableStats: true,
 });
