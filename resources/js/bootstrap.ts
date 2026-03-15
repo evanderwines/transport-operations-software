@@ -15,11 +15,13 @@ const reverbHost = 'transport-operations-ws.onrender.com';
 const reverbPort = 443;
 
 window.Echo = new Echo({
-    broadcaster: 'reverb',
-    key: reverbKey,
-    wsHost: reverbHost,
-    wsPort: reverbPort,
-    wssPort: reverbPort,
-    forceTLS: true,
-    enabledTransports: ['wss'],
+  broadcaster: 'reverb',
+  key: reverbKey,
+  wsHost: reverbHost,
+  wsPort: reverbPort,
+  wssPort: reverbPort,
+  forceTLS: true,
+  enabledTransports: ['wss'],
+  // This prevents the sockjs fallback:
+  disableStats: true,
 });
