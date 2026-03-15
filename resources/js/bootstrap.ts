@@ -19,24 +19,21 @@ const reverbHost = 'transport-operations-ws.onrender.com';
 const reverbPort = 443;
 const reverbPath = `/app/${reverbKey}`;
 
-window.Echo = new Echo({
-  broadcaster: 'reverb',
-  key: reverbKey,
-  host: reverbHost,
-  httpHost: reverbHost,
+const pusher = new Pusher(reverbKey, {
   wsHost: reverbHost,
-  wsPath: reverbPath,
   wsPort: reverbPort,
   wssPort: reverbPort,
-  httpPort: reverbPort,
-  httpsPort: reverbPort,
-  httpPath: reverbPath,
+  wsPath: reverbPath,
   forceTLS: true,
-  useTLS: true,
   enabledTransports: ['wss'],
-  authEndpoint: '',
   // This prevents the sockjs fallback:
   disableStats: true,
+});
+
+window.Echo = new Echo({
+  broadcaster: 'reverb',
+  client: pusher,
+  authEndpoint: '',
 });
 
 // Debug connection state in the browser console
