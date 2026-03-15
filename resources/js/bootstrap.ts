@@ -53,6 +53,15 @@ pusher.connection.bind('error', (err: any) => {
   console.log('Pusher error', err);
 });
 
+// Force a connection attempt so we see logs
+pusher.connect();
+// eslint-disable-next-line no-console
+console.log('Pusher state (immediate)', pusher.connection.state);
+setTimeout(() => {
+  // eslint-disable-next-line no-console
+  console.log('Pusher state (after 2s)', pusher.connection.state);
+}, 2000);
+
 window.Echo = new Echo({
   broadcaster: 'pusher',
   client: pusher,
