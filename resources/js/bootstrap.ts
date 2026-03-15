@@ -13,6 +13,7 @@ window.Pusher = Pusher;
 const reverbKey = 'cfvbmtogk4rzm2nh7ijt';
 const reverbHost = 'transport-operations-ws.onrender.com';
 const reverbPort = 443;
+const reverbPath = `/app/${reverbKey}`;
 
 window.Echo = new Echo({
   broadcaster: 'reverb',
@@ -20,11 +21,12 @@ window.Echo = new Echo({
   host: reverbHost,
   httpHost: reverbHost,
   wsHost: reverbHost,
-  wsPath: '',
+  wsPath: reverbPath,
   wsPort: reverbPort,
   wssPort: reverbPort,
   httpPort: reverbPort,
   httpsPort: reverbPort,
+  httpPath: reverbPath,
   forceTLS: true,
   useTLS: true,
   enabledTransports: ['wss'],
