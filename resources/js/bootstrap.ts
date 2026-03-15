@@ -17,7 +17,7 @@ window.Pusher = Pusher;
 const reverbKey = 'cfvbmtogk4rzm2nh7ijt';
 const reverbHost = 'transport-operations-ws.onrender.com';
 const reverbPort = 443;
-const reverbPath = `/app/${reverbKey}`;
+const reverbPath = '';
 
 const pusher = new Pusher(reverbKey, {
   cluster: '',
@@ -25,7 +25,11 @@ const pusher = new Pusher(reverbKey, {
   wsPort: reverbPort,
   wssPort: reverbPort,
   wsPath: reverbPath,
-  forceTLS: true, 
+  httpHost: reverbHost,
+  httpPath: reverbPath,
+  httpPort: reverbPort,
+  httpsPort: reverbPort,
+  forceTLS: true,
   enabledTransports: ['wss'],
   // This prevents the sockjs fallback:
   disableStats: true,
