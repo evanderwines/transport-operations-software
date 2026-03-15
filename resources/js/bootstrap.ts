@@ -20,11 +20,12 @@ const reverbPort = 443;
 const reverbPath = `/app/${reverbKey}`;
 
 const pusher = new Pusher(reverbKey, {
+  cluster: '',
   wsHost: reverbHost,
   wsPort: reverbPort,
   wssPort: reverbPort,
   wsPath: reverbPath,
-  forceTLS: true,
+  forceTLS: true, 
   enabledTransports: ['wss'],
   // This prevents the sockjs fallback:
   disableStats: true,
