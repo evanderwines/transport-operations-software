@@ -10,19 +10,16 @@ declare global {
 
 window.Pusher = Pusher;
 
-const reverbKey = 'cfvbmtogk4rzm2nh7ijt'
-if (reverbKey) {
-    window.Echo = new Echo({
-        broadcaster: 'reverb',
-        key: reverbKey,
-        wsHost: import.meta.env.VITE_REVERB_HOST,
-        wsPort: import.meta.env.VITE_REVERB_PORT ?? 80,
-        wssPort: import.meta.env.VITE_REVERB_PORT ?? 443,
-        forceTLS: true,
-        enabledTransports: ['ws', 'wss'],
-    });
-} else {
-    // Avoid runtime errors when env vars are missing.
-    // eslint-disable-next-line no-console
-    console.warn('VITE_REVERB_APP_KEY is missing; Reverb disabled.');
-}
+const reverbKey = 'cfvbmtogk4rzm2nh7ijt';
+const reverbHost = 'transport-operations-ws.onrender.com';
+const reverbPort = 443;
+
+window.Echo = new Echo({
+    broadcaster: 'reverb',
+    key: reverbKey,
+    wsHost: reverbHost,
+    wsPort: reverbPort,
+    wssPort: reverbPort,
+    forceTLS: true,
+    enabledTransports: ['wss'],
+});
