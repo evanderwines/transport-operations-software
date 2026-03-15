@@ -17,7 +17,7 @@ window.Pusher = Pusher;
 const reverbKey = 'cfvbmtogk4rzm2nh7ijt';
 const reverbHost = 'transport-operations-ws.onrender.com';
 const reverbPort = 443;
-const reverbPath = '';
+const reverbPath = `/app/${reverbKey}`;
 
 const pusher = new Pusher(reverbKey, {
   cluster: '',
