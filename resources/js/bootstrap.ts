@@ -1,3 +1,7 @@
+// Sanity check to confirm this file runs in the built bundle.
+// eslint-disable-next-line no-console
+console.log('bootstrap loaded');
+
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 
@@ -48,3 +52,4 @@ window.Echo.connector.pusher.connection.bind('error', (err: any) => {
   console.log('Echo error', err);
 });
 window.Echo.connector.pusher.connect();
+
