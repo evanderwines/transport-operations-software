@@ -35,6 +35,24 @@ const pusher = new Pusher(reverbKey, {
   disableStats: true,
 });
 
+// Log the actual socket URL Pusher uses
+pusher.connection.bind('connecting', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const url = (pusher.connection as any).connection?.url;
+  // eslint-disable-next-line no-console
+  console.log('Pusher connecting URL', url);
+});
+pusher.connection.bind('connected', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const url = (pusher.connection as any).connection?.url;
+  // eslint-disable-next-line no-console
+  console.log('Pusher connected URL', url);
+});
+pusher.connection.bind('error', (err: any) => {
+  // eslint-disable-next-line no-console
+  console.log('Pusher error', err);
+});
+
 window.Echo = new Echo({
   broadcaster: 'pusher',
   client: pusher,
