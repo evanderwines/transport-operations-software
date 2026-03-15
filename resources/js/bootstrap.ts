@@ -32,9 +32,8 @@ const pusher = new Pusher(reverbKey, {
 });
 
 window.Echo = new Echo({
-  broadcaster: 'reverb',
+  broadcaster: 'pusher',
   client: pusher,
-  authEndpoint: '',
 });
 
 // Debug connection state in the browser console
