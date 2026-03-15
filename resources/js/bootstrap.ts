@@ -39,17 +39,28 @@ window.Echo = new Echo({
 });
 
 // Debug connection state in the browser console
-window.Echo.connector.pusher.connection.bind('state_change', (s: any) => {
+// eslint-disable-next-line no-console
+console.log('Echo instance', window.Echo);
+// eslint-disable-next-line no-console
+console.log('Echo connector', window.Echo?.connector);
+// eslint-disable-next-line no-console
+console.log('Echo connection (initial)', window.Echo?.connector?.pusher?.connection?.state);
+
+// Enable Pusher debug logs
+try {
+  (window as any).Pusher.logToConsole = true;
+} catch {}
+
+window.Echo?.connector?.pusher?.connection?.bind('state_change', (s: any) => {
   // eslint-disable-next-line no-console
   console.log('Echo state', s);
 });
-window.Echo.connector.pusher.connection.bind('connected', () => {
+window.Echo?.connector?.pusher?.connection?.bind('connected', () => {
   // eslint-disable-next-line no-console
   console.log('Echo connected');
 });
-window.Echo.connector.pusher.connection.bind('error', (err: any) => {
+window.Echo?.connector?.pusher?.connection?.bind('error', (err: any) => {
   // eslint-disable-next-line no-console
   console.log('Echo error', err);
 });
-window.Echo.connector.pusher.connect();
-
+window.Echo?.connector?.pusher?.connect();
