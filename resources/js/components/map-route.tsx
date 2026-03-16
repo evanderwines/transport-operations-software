@@ -1,13 +1,8 @@
 import { MapContainer, Marker, TileLayer } from 'react-leaflet'
 import { Reservation, VehicleLocation } from "@/types";
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-import { FlagTriangleRight, Timer, Waypoints, CornerDownRight, ChevronDown, Star } from 'lucide-react';
-
-import { Badge } from './ui/badge';
-import StatusTag from './status-tag';
 import L, { LatLng } from 'leaflet';
-import RoutingMachine from './routing-machine';
 
 import '../bootstrap';
 import { getRoutes } from '@/lib/utils';
@@ -19,47 +14,31 @@ interface MapRouteProps {
     padding?: number;
 }
 
-interface routeSummary {
-    text: string;
-    value: number;
-    icon: ReactNode;
-}
-
 const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
 
     const [vehicleLoc, setVehicleLoc] = useState<LatLng | null>(null);
     const [routePoints, setRoutePoints] = useState<LatLng[]>([]);
+    const [routeInitialized, setRouteInitialized] = useState(false);
 
-    const waypoints = [
-        new LatLng(
-            parseFloat(reservation.pickup_latlng.split(",")[0]),
-            parseFloat(reservation.pickup_latlng.split(",")[1])
-        ),
-        new LatLng(
-            parseFloat(reservation.dropoff_latlng.split(",")[0]),
-            parseFloat(reservation.dropoff_latlng.split(",")[1])
-        ),
-    ];
+    const pickup = new LatLng(
+        parseFloat(reservation.pickup_latlng.split(",")[0]),
+        parseFloat(reservation.pickup_latlng.split(",")[1])
+    );
 
+    const dropoff = new LatLng(
+        parseFloat(reservation.dropoff_latlng.split(",")[0]),
+        parseFloat(reservation.dropoff_latlng.split(",")[1])
+    );
+
+    // listen for driver updates
     useEffect(() => {
 
-        getRoutes(waypoints)
-            .then(res => {
-                setRoutePoints(res);
-            })
-            .catch(err => {
-                console.log(err)
-            })
-
         const echo = (window as any).Echo;
-        if (!echo || typeof echo.channel !== "function") {
-            return;
-        }
+        if (!echo || typeof echo.channel !== "function") return;
 
         const channel = echo.channel("vehicles");
 
         channel.listen(".VehicleLocationUpdated", (e: VehicleLocation) => {
-            console.log(e)
             setVehicleLoc(new LatLng(e.lat, e.lng));
         });
 
@@ -69,12 +48,34 @@ const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
 
     }, []);
 
+    // fetch route once when first driver location arrives
+    useEffect(() => {
+
+        if (!vehicleLoc || routeInitialized) return;
+
+        const waypoints = [
+            vehicleLoc,
+            pickup,
+            dropoff
+        ];
+
+        getRoutes(waypoints)
+            .then(res => {
+                setRoutePoints(res);
+                setRouteInitialized(true);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+
+    }, [vehicleLoc]);
+
     const setBounds = (map: L.Map, bounds: L.LatLngBounds) => {
         map.fitBounds(bounds, {
             paddingTopLeft: [0, 0],
             paddingBottomRight: [0, 70]
         });
-    }
+    };
 
     if (!vehicleLoc) {
         return (
@@ -85,7 +86,7 @@ const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
     }
 
     return (
-        <MapContainer center={vehicleLoc} zoom={15} scrollWheelZoom={false} className='z-0'>
+        <MapContainer center={vehicleLoc} zoom={15} scrollWheelZoom={false} className="z-0">
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png"
@@ -101,10 +102,10 @@ const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
 
             <LiveVehicleLocation vehicleLoc={vehicleLoc} />
 
-            <Marker position={waypoints[0]} />
-            <Marker position={waypoints[1]} />
+            <Marker position={pickup} />
+            <Marker position={dropoff} />
         </MapContainer>
-    )
-}
+    );
+};
 
 export default MapRoute;
