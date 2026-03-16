@@ -30,14 +30,10 @@ class TaskController extends Controller
         ]);
     }
 
-    public function show($vehicle_id)
+    public function show($reservation_id)
     {
         return Inertia::render('driver/task-details', [
-            'reservation' => Reservation::with(['dispatch', 'customer'])
-                ->whereHas('dispatch', function ($query) use ($vehicle_id) {
-                    $query->where('vehicle_id', $vehicle_id);
-                })
-                ->firstOrFail(),
+            'reservation' => Reservation::where('reservation_id', $reservation_id),
         ]);
     }
 

@@ -10,15 +10,17 @@ const StatusTag = ({ text }: { text: string }) => {
             case "LOADING":
             case "ASSIGNED": return "#8dc9ecff";
             case "EN ROUTE":
-            case "DELIVERED": 
+            case "GOING TO PICKUP":
+            case "GOINT TO DROPOFF":
+            case "DELIVERED":
             case "DISPATCHED":
             case "PAID": return "#78e79fff";
             case "WAITING":
-            case "CANCELLED": return "#e98780ff";   
+            case "CANCELLED": return "#e98780ff";
             default: return "#e6e6e6";
         }
     }
-    
+
 
 
     return (
