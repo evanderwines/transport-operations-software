@@ -55,13 +55,13 @@ const TaskDetails = () => {
 
     const getNextAction = (current: string) => {
         if (!current || current === 'ASSIGNED' || current === 'PENDING') {
-            return { label: 'Start', status: 'EN_ROUTE' };
+            return { label: 'Start', status: 'EN ROUTE' };
         }
         if (current === 'EN ROUTE') {
             return { label: 'Arrived at Pick Up', status: 'WAITING' };
         }
         if (current === 'WAITING') {
-            return { label: 'Going to Dropoff', status: 'EN_ROUTE_DROPOFF' };
+            return { label: 'Going to Dropoff', status: 'EN ROUTE' };
         }
         if (current === 'EN ROUTE') {
             return { label: 'Arrived at Dropoff', status: 'COMPLETE' };
