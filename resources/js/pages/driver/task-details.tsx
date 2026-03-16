@@ -60,11 +60,11 @@ const TaskDetails = () => {
         if (!current || current === 'ASSIGNED' || current === 'PENDING') {
             return { label: 'Start', status: 'GOING TO PICKUP' };
         }
-        if (current === 'GOING TO PICKCUP') {
+        if (current === 'GOING TO PICKUP') {
             return { label: 'Arrived at Pick Up', status: 'WAITING' };
         }
         if (current === 'WAITING') {
-            return { label: 'Going to Dropoff', status: 'GOING TO PICKCUP' };
+            return { label: 'Going to Dropoff', status: 'GOING TO PICKUP' };
         }
         if (current === 'GOING TO DROPOFF') {
             return { label: 'Arrived at Dropoff', status: 'COMPLETE' };
