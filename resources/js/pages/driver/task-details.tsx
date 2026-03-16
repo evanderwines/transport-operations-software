@@ -58,7 +58,7 @@ const TaskDetails = () => {
 
     const getNextAction = (current: string) => {
         if (!current || current === 'ASSIGNED' || current === 'PENDING') {
-            return { label: 'Start', status: 'EN ROUTE' };
+            return { label: 'Start', status: 'GOING TO PICKUP' };
         }
         if (current === 'GOING TO PICKCUP') {
             return { label: 'Arrived at Pick Up', status: 'WAITING' };

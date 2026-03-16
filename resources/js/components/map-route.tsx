@@ -82,7 +82,7 @@ const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
 
     if (!vehicleLoc) {
         return (
-            <div className="flex items-center justify-center h-[400px] text-sm text-muted-foreground">
+            <div className="flex items-center justify-center h-[400px] text-sm text-muted-foreground space-x-2">
                 <LoaderCircle className='h-4 w-4 animate-spin' />
                 Calculating route...
             </div>
