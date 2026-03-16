@@ -24,12 +24,10 @@ const ActiveDispatches = () => {
 	const props = usePage<{ reservations: Reservation[], selectedReservation: Reservation }>().props;
 	const isOpen = usePage<SharedData>().props.sidebarOpen;
 
-	const selectedReservation = props.selectedReservation || props.reservations[0];
+	const selectedReservation = props.selectedReservation || props.reservations[0] || null;
 
 
-	console.log(props.reservations);
 
-	
 
 
 
@@ -54,13 +52,16 @@ const ActiveDispatches = () => {
 						</div>
 					</div>
 					<div className='flex-3 relative rounded-s-md overflow-hidden' style={{ height: "calc(100vh - 85px)", width: "100%" }}>
-						
-						<FloatingReservationDetails reservation={selectedReservation} />	
-
-						
 
 
-						{selectedReservation && <MapRoute reservation={selectedReservation} padding={400} />}
+
+
+
+
+						{selectedReservation && <>
+							<FloatingReservationDetails reservation={selectedReservation} />
+							<MapRoute reservation={selectedReservation} padding={400} />
+						</>}
 
 					</div>
 				</div>
