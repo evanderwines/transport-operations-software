@@ -19,15 +19,13 @@ const reverbHost = 'transport-operations-ws.onrender.com';
 const reverbPort = 443;
 const reverbPath = `/app/${reverbKey}`;
 
-const pusher = new Pusher(reverbKey, {
+const pusher = new Pusher("cfvbmtogk4rzm2nh7ijt", {
   cluster: '',
-  
-  wsHost: reverbHost,
+  wsHost: "transport-operations-ws.onrender.com",
   wsPort: 443,
   wssPort: 443,
   forceTLS: true,
-  enabledTransports: ['wss'],
-  disableStats: true,
+  enabledTransports: ["wss"],
 });
 
 // Log the actual socket URL Pusher uses
