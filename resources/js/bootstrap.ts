@@ -19,11 +19,20 @@ const REVERB_HOST = "transport-operations-ws.onrender.com";
 
 const pusher = new Pusher(REVERB_KEY, {
     cluster: "mt1",
+
     wsHost: REVERB_HOST,
     wsPort: 443,
     wssPort: 443,
+    wsPath: "",
+
     forceTLS: true,
-    enabledTransports: ["wss"],
+
+    enabledTransports: ["ws", "wss"],
+    disabledTransports: ["xhr_streaming", "xhr_polling", "sockjs"]
+});
+
+pusher.connection.bind("state_change", (states: any) => {
+    console.log("Pusher state:", states);
 });
 
 pusher.connection.bind("connected", () => {
@@ -36,7 +45,7 @@ pusher.connection.bind("error", (err: any) => {
 
 window.Echo = new Echo({
     broadcaster: "pusher",
-    client: pusher,
+    client: pusher
 });
 
 console.log("Echo initialized", window.Echo);
