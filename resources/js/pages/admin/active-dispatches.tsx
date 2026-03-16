@@ -33,6 +33,8 @@ const ActiveDispatches = () => {
 		{ text: "Distance", value: "15/120 mi", icon: <Route size={12} color='white' /> },
 	]
 
+	console.log(props.reservations);
+
 	
 
 
