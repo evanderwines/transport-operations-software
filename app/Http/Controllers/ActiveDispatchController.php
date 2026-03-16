@@ -15,7 +15,7 @@ class ActiveDispatchController extends Controller
             'dispatch.vehicle.driver',
         ])
         ->whereHas('dispatch', function ($query) {
-            $query->whereIn('status', ['WAITING', 'DELIVERED']);
+            $query->whereNotIn('status', ['UPCOMING', 'DELIVERED']);
         })
         ->get();
 
