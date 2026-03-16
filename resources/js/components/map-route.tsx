@@ -30,7 +30,7 @@ interface routeSummary {
 const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
 
 
-    const [vehicleLoc, setVehicleLoc] = useState<LatLng>(new LatLng(14.577499898900426, 121.10226399999999));
+    const [vehicleLoc, setVehicleLoc] = useState<LatLng | null>(null);
     const [routePoints, setRoutePoints] = useState<LatLng[]>([]);
     const waypoints = [
         new LatLng(parseFloat(reservation.pickup_latlng.split(",")[0]), parseFloat(reservation.pickup_latlng.split(",")[1])),
@@ -62,15 +62,9 @@ const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
 
         const channel = echo.channel("vehicles");
 
-        // channel.listen(".VehicleLocationUpdated", (e: VehicleLocation) => {
-        //     console.log(e)
-        //     setVehicleLoc(new LatLng(e.lat, e.lng));
-        // });
-        channel.listen('VehicleLocationUpdated', (e: any) => {
-            console.log('no-dot', e);
-        });
-        channel.listen('.VehicleLocationUpdated', (e: any) => {
-            console.log('dot', e);
+        channel.listen(".VehicleLocationUpdated", (e: VehicleLocation) => {
+            console.log(e)
+            setVehicleLoc(new LatLng(e.lat, e.lng));
         });
 
 
@@ -92,23 +86,28 @@ const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
 
 
 
-        <MapContainer center={vehicleLoc} zoom={15} scrollWheelZoom={false} className='z-0'>
-            <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png"
-            />
+        <div>
+            {
+                vehicleLoc &&
+                <MapContainer center={vehicleLoc} zoom={15} scrollWheelZoom={false} className='z-0'>
+                    <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png"
+                    />
 
 
-            {routePoints.length > 0 && (
-                <RoutePolyline routePoints={routePoints} driverPos={vehicleLoc} setBounds={setBounds} />
-            )}
+                    {routePoints.length > 0 && (
+                        <RoutePolyline routePoints={routePoints} driverPos={vehicleLoc} setBounds={setBounds} />
+                    )}
 
-            {vehicleLoc && <LiveVehicleLocation vehicleLoc={vehicleLoc} />}
+                    {vehicleLoc && <LiveVehicleLocation vehicleLoc={vehicleLoc} />}
 
-            <Marker position={waypoints[0]} />
-            <Marker position={waypoints[1]} />
+                    <Marker position={waypoints[0]} />
+                    <Marker position={waypoints[1]} />
 
-        </MapContainer>
+                </MapContainer>
+            }
+        </div>
 
 
     )
