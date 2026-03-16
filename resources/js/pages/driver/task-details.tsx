@@ -48,6 +48,8 @@ const TaskDetails = () => {
         map.fitBounds(bounds);
     }
 
+    console.log(props.reservation);
+
     const [position, setPosition] = useState<LatLng>(new LatLng(14.77255, 120.97353));
     const [routes, setRoute] = useState<LatLng[]>([]);
     const [vehicleLoc, setVehicleLoc] = useState()
