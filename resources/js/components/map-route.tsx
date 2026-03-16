@@ -1,15 +1,7 @@
-import { MapContainer, Marker, TileLayer } from 'react-leaflet'
+import { MapContainer, TileLayer } from 'react-leaflet'
 import { Reservation, VehicleLocation } from "@/types";
-import { ReactNode, useEffect, useState } from "react";
-
-import { FlagTriangleRight, Timer, Waypoints, CornerDownRight, ChevronDown, Star } from 'lucide-react';
-
-import { Badge } from './ui/badge';
-import StatusTag from './status-tag';
+import { useEffect, useState } from "react";
 import L, { LatLng } from 'leaflet';
-import RoutingMachine from './routing-machine';
-
-import '../bootstrap';
 import { getRoutes } from '@/lib/utils';
 import RoutePolyline from './route-polyline';
 import LiveVehicleLocation from './live-vehicle-location';
@@ -17,84 +9,77 @@ import LiveVehicleLocation from './live-vehicle-location';
 interface MapRouteProps {
     reservation: Reservation;
     padding?: number;
-
 }
-
-interface routeSummary {
-    text: string;
-    value: number;
-    icon: ReactNode;
-}
-
 
 const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
-
-
     const [vehicleLoc, setVehicleLoc] = useState<LatLng | null>(null);
     const [routePoints, setRoutePoints] = useState<LatLng[]>([]);
-    const waypoints = [
-        new LatLng(parseFloat(reservation.pickup_latlng.split(",")[0]), parseFloat(reservation.pickup_latlng.split(",")[1])),
-        new LatLng(parseFloat(reservation.dropoff_latlng.split(",")[0]), parseFloat(reservation.dropoff_latlng.split(",")[1])),
-    ]
 
+    // helper to parse reservation latlng strings
+    const pickupLatLng = new LatLng(
+        parseFloat(reservation.pickup_latlng.split(",")[0]),
+        parseFloat(reservation.pickup_latlng.split(",")[1])
+    );
+    const dropoffLatLng = new LatLng(
+        parseFloat(reservation.dropoff_latlng.split(",")[0]),
+        parseFloat(reservation.dropoff_latlng.split(",")[1])
+    );
+
+    // subscribe to vehicle updates once
     useEffect(() => {
-
-        // const interval = setInterval(() => {
-        //     // setVehicleLoc(prev => new LatLng(prev.lat - 0.00005, prev.lng - 0.00005))
-        // }, 500)
-
-        getRoutes(
-            waypoints
-        )
-            .then(res => {
-                setRoutePoints(res);
-            })
-            .catch(err => {
-                console.log(err)
-            })
-
-
-
         const echo = (window as any).Echo;
-        if (!echo || typeof echo.channel !== "function") {
-            return;
-        }
+        if (!echo || typeof echo.channel !== "function") return;
 
         const channel = echo.channel("vehicles");
-
         channel.listen(".VehicleLocationUpdated", (e: VehicleLocation) => {
-            console.log(e)
             setVehicleLoc(new LatLng(e.lat, e.lng));
         });
-
 
         return () => {
             try { echo.leaveChannel("vehicles"); } catch { }
         };
-
     }, []);
+
+    // compute route whenever vehicleLoc becomes available (or reservation changes)
+    useEffect(() => {
+        // If you want route only when driver is available:
+        if (!vehicleLoc) {
+            setRoutePoints([]); // clear route until driver appears
+            return;
+        }
+
+        // Build waypoints: driver -> pickup -> dropoff
+        const waypoints = [
+            vehicleLoc,
+            pickupLatLng,
+            dropoffLatLng
+        ];
+
+        getRoutes(waypoints)
+            .then(res => {
+                setRoutePoints(res);
+            })
+            .catch(err => {
+                console.error("getRoutes error:", err);
+            });
+
+    }, [vehicleLoc, reservation.pickup_latlng, reservation.dropoff_latlng]);
 
     const setBounds = (map: L.Map, bounds: L.LatLngBounds) => {
         map.fitBounds(bounds, {
             paddingTopLeft: [0, 0],
             paddingBottomRight: [0, 70]
         });
-
     }
 
     return (
-
-
-
         <div>
-            {
-                vehicleLoc &&
+            {vehicleLoc && (
                 <MapContainer center={vehicleLoc} zoom={15} scrollWheelZoom={false} className='z-0'>
                     <TileLayer
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        attribution='&copy; OpenStreetMap contributors'
                         url="https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png"
                     />
-
 
                     {routePoints.length > 0 && (
                         <RoutePolyline routePoints={routePoints} driverPos={vehicleLoc} setBounds={setBounds} />
@@ -102,15 +87,11 @@ const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
 
                     {vehicleLoc && <LiveVehicleLocation vehicleLoc={vehicleLoc} />}
 
-                    <Marker position={waypoints[0]} />
-                    <Marker position={waypoints[1]} />
-
+                    {/* NOTE: pickup/dropoff markers intentionally removed to avoid showing them on the map */}
                 </MapContainer>
-            }
+            )}
         </div>
-
-
-    )
+    );
 }
 
-export default MapRoute
+export default MapRoute;
