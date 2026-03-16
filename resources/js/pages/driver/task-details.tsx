@@ -54,7 +54,7 @@ const TaskDetails = () => {
     const [status, setStatus] = useState<string>(props.reservation.status || '');
 
     const getNextAction = (current: string) => {
-        if (!current || current === 'PENDING') {
+        if (!current || current === 'ASSIGNED' || current === 'PENDING') {
             return { label: 'Start', status: 'EN ROUTE' };
         }
         if (current === 'EN ROUTE') {
