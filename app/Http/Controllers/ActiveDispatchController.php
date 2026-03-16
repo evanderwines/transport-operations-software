@@ -14,10 +14,7 @@ class ActiveDispatchController extends Controller
             'dispatch',
             'dispatch.vehicle',
             'dispatch.vehicle.driver',
-        ])
-        ->whereHas('dispatch', function ($query) {
-            $query->whereNotIn('status', ['UPCOMING', 'DELIVERED']);
-        })
+        ])->whereIn('status', ['EN ROUTE', 'WAITING'])
         ->get();
 
         return Inertia::render('admin/active-dispatches', [
@@ -32,10 +29,7 @@ class ActiveDispatchController extends Controller
             'dispatch',
             'dispatch.vehicle',
             'dispatch.vehicle.driver',
-        ])
-        ->whereHas('dispatch', function ($query) {
-            $query->whereNotIn('status', ['UPCOMING', 'DELIVERED']);
-        })
+        ])->whereIn('status', ['EN ROUTE', 'WAITING'])
         ->get();
 
         return Inertia::render('admin/active-dispatches', [
