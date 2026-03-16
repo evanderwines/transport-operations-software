@@ -26,12 +26,6 @@ const ActiveDispatches = () => {
 
 	const selectedReservation = props.selectedReservation || props.reservations[0];
 
-	const summary = [
-		{ text: "Current Location", value: "W Service Road", icon: <MapPin size={12} color='white' /> },
-		{ text: "Current Speed", value: '76 mph', icon: <Gauge size={12} color='white' /> },
-		{ text: "ETA", value: "11:42 am", icon: <Timer size={12} color='white' /> },
-		{ text: "Distance", value: "15/120 mi", icon: <Route size={12} color='white' /> },
-	]
 
 	console.log(props.reservations);
 
@@ -60,23 +54,6 @@ const ActiveDispatches = () => {
 						</div>
 					</div>
 					<div className='flex-3 relative rounded-s-md overflow-hidden' style={{ height: "calc(100vh - 85px)", width: "100%" }}>
-						<div className="w-160 flex justify-center gap-10 absolute top-5 left-[50%] -translate-x-[50%] z-99 bg-white rounded-md pb-4 pt-5 shadow-md ps-7 pe-8 ">
-							{
-								summary.map((item, index) => {
-									return (
-										<div className='flex items-center gap-2' key={index}>
-											<div className='p-2 bg-blue-400 flex items-center justify-center rounded-full shadow-sm'>
-												{item.icon}
-											</div>
-											<div>
-												<p className='text-xs font-bold'>{item.text}</p>
-												<p className='text-xs text-gray-500'>{item.value}</p>
-											</div>
-										</div>
-									)
-								})
-							}
-						</div>
 						
 						<FloatingReservationDetails reservation={selectedReservation} />	
 

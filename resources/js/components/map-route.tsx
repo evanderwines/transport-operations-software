@@ -75,7 +75,7 @@ const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
     const setBounds = (map: L.Map, bounds: L.LatLngBounds) => {
         map.fitBounds(bounds, {
             paddingTopLeft: [0, 0],
-            paddingBottomRight: [0, 70]
+            paddingBottomRight: [0, 0]
         });
     };
 

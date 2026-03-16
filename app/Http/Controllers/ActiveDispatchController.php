@@ -12,6 +12,7 @@ class ActiveDispatchController extends Controller
     {
         $reservations = Reservation::with([
             'dispatch',
+            'dispatch.vehicle',
             'dispatch.vehicle.driver',
         ])
         ->whereHas('dispatch', function ($query) {
@@ -29,6 +30,7 @@ class ActiveDispatchController extends Controller
     {
         $reservations = Reservation::with([
             'dispatch',
+            'dispatch.vehicle',
             'dispatch.vehicle.driver',
         ])
         ->whereHas('dispatch', function ($query) {
