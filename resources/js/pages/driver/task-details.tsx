@@ -30,7 +30,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 
 const TaskDetails = () => {
-    const props = usePage<{ reservation: Reservation, auth: { user: User } }>().props;
+    const { props } = usePage<{ reservation: Reservation, auth: { user: User } }>();
 
     console.log(props.reservation);
 
