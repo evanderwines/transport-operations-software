@@ -14,7 +14,7 @@ class ActiveDispatchController extends Controller
             'dispatch',
             'dispatch.vehicle',
             'dispatch.vehicle.driver',
-        ])->whereIn('status', ['EN ROUTE', 'GOING TO PICKCUP', 'GOING TO DROPOFF', 'WAITING'])
+        ])->whereIn('status', ['EN ROUTE', 'GOING TO PICKUP', 'GOING TO DROPOFF', 'WAITING'])
         ->get();
 
         return Inertia::render('admin/active-dispatches', [
@@ -29,7 +29,7 @@ class ActiveDispatchController extends Controller
             'dispatch',
             'dispatch.vehicle',
             'dispatch.vehicle.driver',
-        ])->whereIn('status', ['EN ROUTE', 'GOING TO PICKCUP', 'GOING TO DROPOFF', 'WAITING'])
+        ])->whereIn('status', ['EN ROUTE', 'GOING TO PICKUP', 'GOING TO DROPOFF', 'WAITING'])
         ->get();
 
         return Inertia::render('admin/active-dispatches', [
