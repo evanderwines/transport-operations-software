@@ -17,7 +17,6 @@ import LiveVehicleLocation from './live-vehicle-location';
 interface MapRouteProps {
     reservation: Reservation;
     padding?: number;
-
 }
 
 interface routeSummary {
@@ -26,34 +25,31 @@ interface routeSummary {
     icon: ReactNode;
 }
 
-
 const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
-
 
     const [vehicleLoc, setVehicleLoc] = useState<LatLng | null>(null);
     const [routePoints, setRoutePoints] = useState<LatLng[]>([]);
+
     const waypoints = [
-        new LatLng(parseFloat(reservation.pickup_latlng.split(",")[0]), parseFloat(reservation.pickup_latlng.split(",")[1])),
-        new LatLng(parseFloat(reservation.dropoff_latlng.split(",")[0]), parseFloat(reservation.dropoff_latlng.split(",")[1])),
-    ]
+        new LatLng(
+            parseFloat(reservation.pickup_latlng.split(",")[0]),
+            parseFloat(reservation.pickup_latlng.split(",")[1])
+        ),
+        new LatLng(
+            parseFloat(reservation.dropoff_latlng.split(",")[0]),
+            parseFloat(reservation.dropoff_latlng.split(",")[1])
+        ),
+    ];
 
     useEffect(() => {
 
-        // const interval = setInterval(() => {
-        //     // setVehicleLoc(prev => new LatLng(prev.lat - 0.00005, prev.lng - 0.00005))
-        // }, 500)
-
-        getRoutes(
-            waypoints
-        )
+        getRoutes(waypoints)
             .then(res => {
                 setRoutePoints(res);
             })
             .catch(err => {
                 console.log(err)
             })
-
-
 
         const echo = (window as any).Echo;
         if (!echo || typeof echo.channel !== "function") {
@@ -63,10 +59,9 @@ const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
         const channel = echo.channel("vehicles");
 
         channel.listen(".VehicleLocationUpdated", (e: VehicleLocation) => {
-            console.log(new LatLng(e.lat, e.lng))
+            console.log(e)
             setVehicleLoc(new LatLng(e.lat, e.lng));
         });
-
 
         return () => {
             try { echo.leaveChannel("vehicles"); } catch { }
@@ -79,36 +74,37 @@ const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
             paddingTopLeft: [0, 0],
             paddingBottomRight: [0, 70]
         });
+    }
 
+    if (!vehicleLoc) {
+        return (
+            <div className="flex items-center justify-center h-[400px] text-sm text-muted-foreground">
+                Locating driver...
+            </div>
+        );
     }
 
     return (
+        <MapContainer center={vehicleLoc} zoom={15} scrollWheelZoom={false} className='z-0'>
+            <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png"
+            />
 
-
-
-        <div>
-            <MapContainer center={vehicleLoc ?? waypoints[0]} zoom={15} scrollWheelZoom={false} className='z-0'>
-                <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png"
+            {routePoints.length > 0 && (
+                <RoutePolyline
+                    routePoints={routePoints}
+                    driverPos={vehicleLoc}
+                    setBounds={setBounds}
                 />
+            )}
 
+            <LiveVehicleLocation vehicleLoc={vehicleLoc} />
 
-                {routePoints.length > 0 && (
-                    <RoutePolyline routePoints={routePoints} driverPos={vehicleLoc} setBounds={setBounds} />
-                )}
-
-                {vehicleLoc && <LiveVehicleLocation vehicleLoc={vehicleLoc} />}
-
-                <Marker position={waypoints[0]} />
-                <Marker position={waypoints[1]} />
-
-            </MapContainer>
-
-        </div>
-
-
+            <Marker position={waypoints[0]} />
+            <Marker position={waypoints[1]} />
+        </MapContainer>
     )
 }
 
-export default MapRoute
+export default MapRoute;
