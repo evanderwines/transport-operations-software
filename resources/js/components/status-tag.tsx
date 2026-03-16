@@ -9,8 +9,7 @@ const StatusTag = ({ text }: { text: string }) => {
             case "PENDING": return "#ead882ff";
             case "LOADING":
             case "ASSIGNED": return "#8dc9ecff";
-            case "EN ROUTE": return "#d978e6ff";
-            case "IN TRANSIT":
+            case "EN ROUTE":
             case "DELIVERED": 
             case "DISPATCHED":
             case "PAID": return "#78e79fff";
