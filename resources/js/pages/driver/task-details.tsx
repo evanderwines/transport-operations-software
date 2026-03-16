@@ -63,7 +63,7 @@ const TaskDetails = () => {
         if (current === 'WAITING') {
             return { label: 'Going to Dropoff', status: 'EN_ROUTE_DROPOFF' };
         }
-        if (current === 'EN_ROUTE_DROPOFF') {
+        if (current === 'EN_ROUTE') {
             return { label: 'Arrived at Dropoff', status: 'COMPLETE' };
         }
         return null;

@@ -39,7 +39,9 @@ const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
         const channel = echo.channel("vehicles");
 
         channel.listen(".VehicleLocationUpdated", (e: VehicleLocation) => {
-            setVehicleLoc(new LatLng(e.lat, e.lng));
+            if (e.vehicle_id === reservation.dispatch.vehicle_id) {
+                setVehicleLoc(new LatLng(e.lat, e.lng));
+            }
         });
 
         return () => {
