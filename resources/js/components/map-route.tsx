@@ -8,6 +8,7 @@ import '../bootstrap';
 import { getRoutes } from '@/lib/utils';
 import RoutePolyline from './route-polyline';
 import LiveVehicleLocation from './live-vehicle-location';
+import { LoaderCircle } from 'lucide-react';
 
 interface MapRouteProps {
     reservation: Reservation;
@@ -82,7 +83,8 @@ const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
     if (!vehicleLoc) {
         return (
             <div className="flex items-center justify-center h-[400px] text-sm text-muted-foreground">
-                Locating driver...
+                <LoaderCircle />
+                Calculating route...
             </div>
         );
     }
