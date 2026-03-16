@@ -86,11 +86,11 @@ const TaskDetails = () => {
 
     useEffect(() => {
 
-
-        const interval = setInterval(() => {
+        const updateLocation = () => {
             navigator.geolocation.getCurrentPosition(
                 (pos) => {
                     const { latitude, longitude } = pos.coords;
+
                     setPosition(new LatLng(latitude, longitude));
 
                     console.log(pos);
@@ -104,11 +104,15 @@ const TaskDetails = () => {
                 (err) => console.error("Geolocation error:", err),
                 { enableHighAccuracy: true }
             );
-        }, 5000); 
+        };
+
+        updateLocation();
+
+        const interval = setInterval(updateLocation, 5000);
 
         return () => clearInterval(interval);
-    }, []);
 
+    }, []);
 
 
 
