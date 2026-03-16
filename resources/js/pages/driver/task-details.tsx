@@ -32,6 +32,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 const TaskDetails = () => {
     const props = usePage<{ reservation: Reservation, auth: { user: User } }>().props;
 
+    console.log(props.reservation);
+
     const date = new Date(props.reservation.dispatch.schedule).toLocaleDateString('en-US', {
         month: 'short',
         day: '2-digit',
@@ -48,7 +50,6 @@ const TaskDetails = () => {
         map.fitBounds(bounds);
     }
 
-    console.log(props.reservation);
 
     const [position, setPosition] = useState<LatLng>(new LatLng(14.77255, 120.97353));
     const [routes, setRoute] = useState<LatLng[]>([]);
