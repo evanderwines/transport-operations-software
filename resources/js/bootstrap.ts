@@ -1,88 +1,67 @@
-// Sanity check to confirm this file runs in the built bundle.
-// eslint-disable-next-line no-console
-console.log('bootstrap loaded');
+// Confirm the bundle is running
+console.log("bootstrap loaded");
 
-import Echo from 'laravel-echo';
-import Pusher from 'pusher-js';
+import Echo from "laravel-echo";
+import Pusher from "pusher-js";
 
 declare global {
-    interface Window {
-        Echo: Echo<any>;
-        Pusher: typeof Pusher;
-    }
+  interface Window {
+    Echo: Echo<any>;
+    Pusher: typeof Pusher;
+  }
 }
 
 window.Pusher = Pusher;
 
-const reverbKey = 'cfvbmtogk4rzm2nh7ijt';
-const reverbHost = 'transport-operations-ws.onrender.com';
-const reverbPort = 443;
-const reverbPath = `/app/${reverbKey}`;
+const REVERB_KEY = "cfvbmtogk4rzm2nh7ijt";
+const REVERB_HOST = "transport-operations-ws.onrender.com";
 
-const pusher = new Pusher("cfvbmtogk4rzm2nh7ijt", {
-  cluster: '',
-  wsHost: "transport-operations-ws.onrender.com",
+// Enable internal Pusher logs
+(Pusher as any).logToConsole = true;
+
+const pusher = new Pusher(REVERB_KEY, {
+  cluster: undefined as any,
+  wsHost: REVERB_HOST,
   wsPort: 443,
   wssPort: 443,
   forceTLS: true,
   enabledTransports: ["wss"],
 });
 
-// Log the actual socket URL Pusher uses
-pusher.connection.bind('connecting', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const url = (pusher.connection as any).connection?.url;
-  // eslint-disable-next-line no-console
-  console.log('Pusher connecting URL', url);
-});
-pusher.connection.bind('connected', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const url = (pusher.connection as any).connection?.url;
-  // eslint-disable-next-line no-console
-  console.log('Pusher connected URL', url);
-});
-pusher.connection.bind('error', (err: any) => {
-  // eslint-disable-next-line no-console
-  console.log('Pusher error', err);
+// Debug connection lifecycle
+pusher.connection.bind("connecting", () => {
+  console.log("Pusher connecting...");
 });
 
-// Force a connection attempt so we see logs
-pusher.connect();
-// eslint-disable-next-line no-console
-console.log('Pusher state (immediate)', pusher.connection.state);
-setTimeout(() => {
-  // eslint-disable-next-line no-console
-  console.log('Pusher state (after 2s)', pusher.connection.state);
-}, 2000);
+pusher.connection.bind("connected", () => {
+  console.log("Pusher connected");
+});
 
+pusher.connection.bind("disconnected", () => {
+  console.log("Pusher disconnected");
+});
+
+pusher.connection.bind("error", (error: any) => {
+  console.log("Pusher error:", error);
+});
+
+pusher.connection.bind("state_change", (states: any) => {
+  console.log("Pusher state change:", states);
+});
+
+// Initialize Echo
 window.Echo = new Echo({
-  broadcaster: 'pusher',
+  broadcaster: "pusher",
   client: pusher,
 });
 
-// Debug connection state in the browser console
-// eslint-disable-next-line no-console
-console.log('Echo instance', window.Echo);
-// eslint-disable-next-line no-console
-console.log('Echo connector', window.Echo?.connector);
-// eslint-disable-next-line no-console
-console.log('Echo connection (initial)', window.Echo?.connector?.pusher?.connection?.state);
+// Echo-level debugging
+window.Echo.connector.pusher.connection.bind("connected", () => {
+  console.log("Echo connected");
+});
 
-// Enable Pusher debug logs
-try {
-  (window as any).Pusher.logToConsole = true;
-} catch {}
+window.Echo.connector.pusher.connection.bind("error", (err: any) => {
+  console.log("Echo error:", err);
+});
 
-window.Echo?.connector?.pusher?.connection?.bind('state_change', (s: any) => {
-  // eslint-disable-next-line no-console
-  console.log('Echo state', s);
-});
-window.Echo?.connector?.pusher?.connection?.bind('connected', () => {
-  // eslint-disable-next-line no-console
-  console.log('Echo connected');
-});
-window.Echo?.connector?.pusher?.connection?.bind('error', (err: any) => {
-  // eslint-disable-next-line no-console
-  console.log('Echo error', err);
-});
-window.Echo?.connector?.pusher?.connect();
+console.log("Echo initialized", window.Echo);
