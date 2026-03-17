@@ -81,7 +81,7 @@ export default function SystemLogs() {
 
 
                     <div className="rounded-lg border bg-white p-5 shadow-sm">
-                        <form onSubmit={applyFilters} className="grid grid-cols-1 gap-4 lg:grid-cols-8">
+                        <form onSubmit={applyFilters} className="grid grid-cols-1 gap-4 lg:grid-cols-7">
                             <div className="lg:col-span-2">
                                 <label className="text-xs uppercase text-gray-500">Search</label>
                                 <Input className='mb-0' value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search description, module, action..." />
@@ -120,7 +120,7 @@ export default function SystemLogs() {
                                 <label className="text-xs uppercase text-gray-500">To</label>
                                 <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
                             </div>
-                            <div className="flex items-end gap-2 lg:col-span-2">
+                            <div className="flex items-end gap-2">
                                 <Button type="submit">Apply</Button>
                                 <Button type="button" variant="ghost" onClick={clearFilters}>Clear</Button>
                             </div>
