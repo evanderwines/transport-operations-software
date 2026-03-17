@@ -56,7 +56,6 @@ const ActiveDispatches = () => {
 						<p className='font-bold mb-4 text-sm'>Active disptaches</p>
 						<form onSubmit={applyFilters} className='flex items-end gap-2 mb-3'>
 							<div className='flex-1'>
-								<label className='text-xs uppercase text-gray-500'>Search</label>
 								<Input
 									type="text"
 									placeholder="Search reservation, customer, driver"

@@ -8,6 +8,7 @@ import { SlidersHorizontal, Plus } from "lucide-react";
 import { step } from "@/routes/reservations";
 import "../bootstrap";
 import ReservationCard from "./reservation-card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
 export default function ReseravtionList({ reservations }: { reservations: PaginationType<Reservation[]> }) {
 	const [reservation, setReservation] = useState<Reservation[]>(reservations.data);
@@ -94,33 +95,45 @@ export default function ReseravtionList({ reservations }: { reservations: Pagina
 						/>
 					</div>
 					<div className="w-36">
-						<label className="text-xs uppercase text-gray-500">Status</label>
-						<select
-							className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-							value={statusFilter}
-							onChange={(e) => setStatusFilter(e.target.value)}
-						>
-							<option value="">All</option>
-							{(statuses ?? []).map((status) => (
-								<option key={status} value={status}>
-									{status}
-								</option>
-							))}
-						</select>
+						<Select>
+							<SelectTrigger>
+								<SelectValue placeholder="Status" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="">All</SelectItem>
+
+								{(statuses ?? []).map((status) => (
+									<SelectItem key={status} value={status}>
+										{status}
+									</SelectItem>
+								))}
+
+							</SelectContent>
+						</Select>
 					</div>
 					<div className="w-36">
-						<label className="text-xs uppercase text-gray-500">Service</label>
+						<Select>
+							<SelectTrigger>
+								<SelectValue placeholder="Service" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="">All</SelectItem>
+
+								{(serviceTypes ?? []).map((service) => (
+									<SelectItem key={service} value={service}>
+										{service}
+									</SelectItem>
+								))}
+
+							</SelectContent>
+						</Select>
 						<select
 							className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
 							value={serviceTypeFilter}
 							onChange={(e) => setServiceTypeFilter(e.target.value)}
 						>
 							<option value="">All</option>
-							{(serviceTypes ?? []).map((service) => (
-								<option key={service} value={service}>
-									{service}
-								</option>
-							))}
+
 						</select>
 					</div>
 					<Button type="submit" variant="outline" className="text-xs">
@@ -128,7 +141,7 @@ export default function ReseravtionList({ reservations }: { reservations: Pagina
 						Apply filter
 					</Button>
 					<Link href={step("1", { query: { date: "today" } })}>
-						<Button variant="outline" className="">
+						<Button className="">
 							<Plus />
 							New Reservation
 						</Button>

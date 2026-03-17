@@ -76,8 +76,7 @@ const FleetManagement = () => {
                     <div className="space-y-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <h2 className="text-xl font-semibold">Fleet Overview</h2>
-                                <p className="text-sm text-gray-500">Live snapshot of your vehicles and assignments.</p>
+                                <h2 className="text-xl font-semibold">Fleet Management</h2>
                             </div>
                             <Button onClick={() => setIsCreateOpen(true)}>
                                 <Plus />
@@ -117,9 +116,9 @@ const FleetManagement = () => {
                                 <div className="mt-4 grid grid-cols-7 gap-2">
                                     {[32, 45, 38, 62, 71, 58, 66].map((value, index) => (
                                         <div key={index} className="flex flex-col items-center gap-2">
-                                            <div className="h-75 w-6 rounded-full bg-gray-100">
+                                            <div className="h-80 w-6 rounded-full bg-gray-100">
                                                 <div
-                                                    className="w-full rounded-full bg-gradient-to-t from-black to-black"
+                                                    className="w-full rounded-full bg-gradient-to-t from-black to-gray-800"
                                                     style={{ height: `${value}%` }}
                                                 />
                                             </div>
