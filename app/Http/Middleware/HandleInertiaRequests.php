@@ -40,6 +40,13 @@ class HandleInertiaRequests extends Middleware
         $hasToken = $request->headers->has('Authorization') || $request->cookies->has('auth_token');
         $user = $hasToken ? auth('sanctum')->user() : null;
 
+        $debug = config('app.debug') ? [
+            'has_cookie' => $request->cookies->has('auth_token'),
+            'has_auth_header' => $request->headers->has('Authorization'),
+            'cookie_len' => $request->cookie('auth_token') ? strlen((string) $request->cookie('auth_token')) : 0,
+            'user_id' => $user?->id,
+        ] : null;
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
@@ -47,6 +54,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $user,
             ],
+            'auth_debug' => $debug,
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'modal' => [
                 'open' => true,

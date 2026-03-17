@@ -21,6 +21,15 @@ class AttachTokenFromCookie
             }
         }
 
+        if (config('app.debug')) {
+            \Log::debug('AttachTokenFromCookie', [
+                'path' => $request->path(),
+                'has_cookie' => $request->cookies->has('auth_token'),
+                'has_auth_header' => $request->headers->has('Authorization'),
+                'cookie_len' => $request->cookie('auth_token') ? strlen((string) $request->cookie('auth_token')) : 0,
+            ]);
+        }
+
         return $next($request);
     }
 }
