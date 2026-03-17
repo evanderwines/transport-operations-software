@@ -8,9 +8,12 @@ interface RoutePolylineProps {
     driverPos: LatLng | null;   // current driver position
     trimDebounceMs?: number;        // optional debounce for trimming
     setBounds: (map: L.Map, bounds: L.LatLngBounds) => void;
+    driverFocus: boolean;
+    setCenter: (map: L.Map) => void;
+
 }
 
-export default function RoutePolyline({ routePoints, driverPos, trimDebounceMs = 100, setBounds }: RoutePolylineProps) {
+export default function RoutePolyline({ routePoints, driverPos, trimDebounceMs = 100, setBounds, driverFocus, setCenter }: RoutePolylineProps) {
     const map = useMap(); // get typed map instance
     const polyRef = useRef<L.Polyline | null>(null);
     const [remaining, setRemaining] = useState<LatLng[]>(routePoints);
@@ -22,6 +25,8 @@ export default function RoutePolyline({ routePoints, driverPos, trimDebounceMs =
         const bounds = L.latLngBounds(routePoints);
         setBounds(map, bounds);
     }, [routePoints]);
+
+    
 
     // inside your component
     useEffect(() => {

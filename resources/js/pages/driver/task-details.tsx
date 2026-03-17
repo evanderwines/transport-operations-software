@@ -128,13 +128,13 @@ const TaskDetails = () => {
 
                     <div className='relative' style={{ width: '100vw', height: '70vh' }}>
 
-                        <Button size="icon" variant="outline" onClick={() => setDriverFocus(!driverFocus)}>
+                        <Button className='absolute right-2 bottom-10 ' size="icon" variant="outline" onClick={() => setDriverFocus(!driverFocus)}>
                             {
                                 driverFocus ? <LocateFixed /> : <Locate /> 
                             }
                         </Button>
 
-                        <MapRoute reservation={props.reservation} padding={0} />
+                        <MapRoute reservation={props.reservation} padding={0} driverFocus={driverFocus} />
 
                     </div>
 

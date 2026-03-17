@@ -81,6 +81,14 @@ const MapRoute = ({ reservation, padding = 0, driverFocus = false }: MapRoutePro
         });
     };
 
+    const setCenter = (map: L.Map) => {
+        if (vehicleLoc) {
+            map.setView(vehicleLoc, 18);
+        }
+    }
+
+
+
     if (!vehicleLoc) {
         return (
             <div className="flex items-center justify-center gap-2 h-[400px] text-sm text-muted-foreground">
@@ -102,6 +110,8 @@ const MapRoute = ({ reservation, padding = 0, driverFocus = false }: MapRoutePro
                     routePoints={routePoints}
                     driverPos={vehicleLoc}
                     setBounds={setBounds}
+                    driverFocus={driverFocus}
+                    setCenter={setCenter}
                 />
             )}
 
