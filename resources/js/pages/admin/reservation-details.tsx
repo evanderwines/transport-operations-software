@@ -8,6 +8,7 @@ import MapRoute from '@/components/map-route';
 import ReservationDetailsLayout from '@/layouts/reservation-details/layout';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import FloatingReservationDetails from '@/components/floating-reservation-details';
+import ReservationMapView from '@/components/reservation-map-view';
 
 
 export default function ReservationDetails() {
@@ -32,7 +33,7 @@ export default function ReservationDetails() {
                 <ReservationDetailsLayout>
                     <div className='flex-3 relative overflow- bg-gray-200' style={{ height: "calc(100vh - 80px)", width: "100%" }}>
                         <FloatingReservationDetails reservation={props.reservation} />
-                        <MapRoute reservation={props.reservation} />
+                        <ReservationMapView reservation={props.reservation} />
                     </div>
                 </ReservationDetailsLayout>
             </AppLayout>

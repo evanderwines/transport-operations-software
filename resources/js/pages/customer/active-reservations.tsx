@@ -51,7 +51,7 @@ const ActiveReservations = () => {
 							}
 						</div>
 					</div>
-					<div className='flex-3 relative rounded-s-md overflow-hidden bg-gray-200' style={{ height: "calc(100vh - 85px)", width: "100%" }}>
+					<div className='flex-3 relative rounded-s-md overflow-hidden' style={{ height: "calc(100vh - 85px)", width: "100%" }}>
 						
 						
 						{props.reservations.length > 0 && <FloatingReservationDetails reservation={selectedReservation} />}

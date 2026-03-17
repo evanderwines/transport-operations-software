@@ -15,7 +15,7 @@ interface MapRouteProps {
     padding?: number;
 }
 
-const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
+const ReservationMapView = ({ reservation, padding = 0 }: MapRouteProps) => {
 
     const [routePoints, setRoutePoints] = useState<LatLng[]>([]);
     const [routeInitialized, setRouteInitialized] = useState(false);
@@ -82,4 +82,4 @@ const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
     );
 };
 
-export default MapRoute;
+export default ReservationMapView;
