@@ -55,12 +55,13 @@ export default function ReseravtionList({ reservations }: { reservations: Pagina
 
 	const applyFilters = (event: React.FormEvent) => {
 		event.preventDefault();
+
 		router.get(
 			"/reservations",
 			{
 				q: searchInput || undefined,
-				status: statusFilter || undefined,
-				service_type: serviceTypeFilter || undefined,
+				status: statusFilter === "none" ? "" : statusFilter || undefined,
+				service_type: serviceTypeFilter === "none" ? "" : serviceTypeFilter || undefined,
 				date_from: dateFrom || undefined,
 				date_to: dateTo || undefined,
 			},
@@ -95,12 +96,14 @@ export default function ReseravtionList({ reservations }: { reservations: Pagina
 						/>
 					</div>
 					<div className="w-36">
-						<Select>
+						<Select
+							onValueChange={(e) => setStatusFilter(e)}
+						>
 							<SelectTrigger>
 								<SelectValue placeholder="Status" />
 							</SelectTrigger>
 							<SelectContent>
-								<SelectItem value="">All</SelectItem>
+								<SelectItem value="none">All</SelectItem>
 
 								{(statuses ?? []).map((status) => (
 									<SelectItem key={status} value={status}>
@@ -112,7 +115,9 @@ export default function ReseravtionList({ reservations }: { reservations: Pagina
 						</Select>
 					</div>
 					<div className="w-36">
-						<Select>
+						<Select
+							onValueChange={(e) => setServiceTypeFilter(e)}
+						>
 							<SelectTrigger>
 								<SelectValue placeholder="Service" />
 							</SelectTrigger>
@@ -127,14 +132,6 @@ export default function ReseravtionList({ reservations }: { reservations: Pagina
 
 							</SelectContent>
 						</Select>
-						<select
-							className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-							value={serviceTypeFilter}
-							onChange={(e) => setServiceTypeFilter(e.target.value)}
-						>
-							<option value="">All</option>
-
-						</select>
 					</div>
 					<Button type="submit" variant="outline" className="text-xs">
 						<SlidersHorizontal />
