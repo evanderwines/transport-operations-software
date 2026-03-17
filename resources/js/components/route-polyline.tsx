@@ -5,7 +5,7 @@ import { findClosestProjectionOnPolyline } from '@/lib/utils';
 
 interface RoutePolylineProps {
     routePoints: LatLng[];      // full route polyline points
-    driverPos: LatLng | null;   // current driver position
+    driverPos?: LatLng | null;   // current driver position
     trimDebounceMs?: number;        // optional debounce for trimming
     setBounds: (map: L.Map, bounds: L.LatLngBounds) => void;
     driverFocus: boolean;
@@ -13,7 +13,7 @@ interface RoutePolylineProps {
 
 }
 
-export default function RoutePolyline({ routePoints, driverPos, trimDebounceMs = 100, setBounds, driverFocus, setCenter }: RoutePolylineProps) {
+export default function RoutePolyline({ routePoints, driverPos = null, trimDebounceMs = 100, setBounds, driverFocus, setCenter }: RoutePolylineProps) {
     const map = useMap(); // get typed map instance
     const polyRef = useRef<L.Polyline | null>(null);
     const [remaining, setRemaining] = useState<LatLng[]>(routePoints);

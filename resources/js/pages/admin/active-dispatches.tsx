@@ -37,7 +37,7 @@ const ActiveDispatches = () => {
 			<AppLayout breadcrumbs={breadcrumbs} >
 				<div className='flex flex-row'>
 					<div className='flex-1 p-4 pt-4.5'>
-						<p className='font-bold mb-4 text-sm'>Active disptaches (1)</p>
+						<p className='font-bold mb-4 text-sm'>Active disptaches</p>
 						<div className='flex items-center gap-2 mb-3'>
 							<SearchBar />
 							<Button variant="outline" className="hidden md:flex text-xs"><SlidersHorizontal />Filter</Button>
