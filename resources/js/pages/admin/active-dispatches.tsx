@@ -64,10 +64,6 @@ const ActiveDispatches = () => {
 									onChange={(e) => setSearch(e.target.value)}
 								/>
 							</div>
-							<div className='flex gap-2'>
-								<Button type="submit" variant="outline" className="text-xs"><SlidersHorizontal />Filter</Button>
-								<Button type="button" variant="ghost" className="text-xs" onClick={clearFilters}>Clear</Button>
-							</div>
 						</form>
 
 						<div>

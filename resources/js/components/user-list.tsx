@@ -84,7 +84,6 @@ export default function UserList() {
                 <p className="font-bold text-sm"></p>
                 <form onSubmit={applyFilters} className="flex items-end gap-2.5">
                     <div className="w-56">
-                        <label className="text-xs uppercase text-gray-500">Search</label>
                         <Input
                             type="text"
                             placeholder="Search name, email, id"
@@ -100,16 +99,7 @@ export default function UserList() {
                         />
                     </div>
 
-                    <Button variant="outline" className="hidden md:flex text-xs">
-                        <SlidersHorizontal />
-                        Apply
-                    </Button>
-                    
-                    <Button type="button" variant="ghost" className="text-xs" onClick={clearFilters}>
-                        Clear
-                    </Button>
-
-                    <Button variant="outline" type="button" onClick={() => setOpen(true)}>
+                    <Button type="button" onClick={() => setOpen(true)}>
                         <Plus />
                         New User
                     </Button>

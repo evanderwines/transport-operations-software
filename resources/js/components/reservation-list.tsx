@@ -123,20 +123,9 @@ export default function ReseravtionList({ reservations }: { reservations: Pagina
 							))}
 						</select>
 					</div>
-					<div className="w-34">
-						<label className="text-xs uppercase text-gray-500">From</label>
-						<Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
-					</div>
-					<div className="w-34">
-						<label className="text-xs uppercase text-gray-500">To</label>
-						<Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
-					</div>
 					<Button type="submit" variant="outline" className="text-xs">
 						<SlidersHorizontal />
-						Filter
-					</Button>
-					<Button type="button" variant="ghost" className="text-xs" onClick={clearFilters}>
-						Clear
+						Apply filter
 					</Button>
 					<Link href={step("1", { query: { date: "today" } })}>
 						<Button variant="outline" className="">

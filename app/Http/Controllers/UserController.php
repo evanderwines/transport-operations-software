@@ -18,7 +18,7 @@ class UserController extends Controller
     {
         $search = trim((string) request()->query('q', ''));
         $query = User::where('role', 'CUSTOMER')
-            ->select('id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at');
+            ->select('id', 'name', 'email', 'created_at', 'updated_at');
 
         if ($search !== '') {
             $query->where(function ($q) use ($search) {
@@ -40,7 +40,7 @@ class UserController extends Controller
     {
         $search = trim((string) request()->query('q', ''));
         $query = User::where('role', 'DRIVER')
-            ->select('id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at');
+            ->select('id', 'name', 'email', 'created_at', 'updated_at');
 
         if ($search !== '') {
             $query->where(function ($q) use ($search) {
@@ -62,7 +62,7 @@ class UserController extends Controller
     {
         $search = trim((string) request()->query('q', ''));
         $query = User::where('role', 'ADMINISTRATOR')
-            ->select('id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at');
+            ->select('id', 'name', 'email', 'created_at', 'updated_at');
 
         if ($search !== '') {
             $query->where(function ($q) use ($search) {
