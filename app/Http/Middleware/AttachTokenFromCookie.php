@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Laravel\Reverb\Loggers\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class AttachTokenFromCookie
@@ -22,7 +23,7 @@ class AttachTokenFromCookie
         }
 
         if (config('app.debug')) {
-            \Log::debug('AttachTokenFromCookie', [
+            Log::debug('AttachTokenFromCookie', [
                 'path' => $request->path(),
                 'has_cookie' => $request->cookies->has('auth_token'),
                 'has_auth_header' => $request->headers->has('Authorization'),

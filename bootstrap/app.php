@@ -18,6 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Ensure auth_token is attached as early as possible.
+        $middleware->prepend(AttachTokenFromCookie::class);
+
         $middleware->trustProxies(
             at: '*',
             headers: Request::HEADER_X_FORWARDED_FOR
@@ -28,21 +31,14 @@ return Application::configure(basePath: dirname(__DIR__))
         );
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state', 'auth_token']);
 
-        // Ensure auth_token is attached before auth middleware runs.
-        $middleware->prependToPriorityList(
-            \Illuminate\Auth\Middleware\Authenticate::class,
-            AttachTokenFromCookie::class
-        );
-
         $middleware->web(append: [
-            AttachTokenFromCookie::class,
             HandleAppearance::class,
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
         ]);
 
         $middleware->api(append: [
-            AttachTokenFromCookie::class,
+            // AttachTokenFromCookie runs globally.
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
