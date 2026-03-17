@@ -1,12 +1,13 @@
 import SearchBar from '@/components/search-bar';
 import AppLayout from '@/layouts/app-layout'
-import { BreadcrumbItem, Driver, SharedData, Vehicle } from '@/types';
+import { BreadcrumbItem, Driver, SharedData, SystemLogEntry, Vehicle } from '@/types';
 import { router, usePage } from '@inertiajs/react';
 import FleetmanagementLayout from '@/layouts/fleet-management/layout';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useMemo, useState, type FormEvent } from 'react';
+import { Plus } from 'lucide-react';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -18,7 +19,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 
 const FleetManagement = () => {
-    const props = usePage<{ vehicles: Vehicle[], selectedVehicle?: Vehicle, availableDrivers: Driver[] }>().props;
+    const props = usePage<{ vehicles: Vehicle[], selectedVehicle?: Vehicle, availableDrivers: Driver[], recentVehicleLogs: SystemLogEntry[] }>().props;
     const isOpen = usePage<SharedData>().props.sidebarOpen;
     const [plateNumber, setPlateNumber] = useState("");
     const [model, setModel] = useState("");
@@ -35,6 +36,17 @@ const FleetManagement = () => {
         const maintenance = props.vehicles.filter((v) => v.status === "MAINTENANCE").length;
         return { total, available, assigned, unassigned, maintenance };
     }, [props.vehicles]);
+
+    const last7DaysLabels = useMemo(() => {
+        const labels: string[] = [];
+        const today = new Date();
+        for (let i = 0; i < 7; i += 1) {
+            const date = new Date(today);
+            date.setDate(today.getDate() - i);
+            labels.push(date.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }));
+        }
+        return labels;
+    }, []);
 
     const handleCreateVehicle = (event: FormEvent) => {
         event.preventDefault();
@@ -67,7 +79,10 @@ const FleetManagement = () => {
                                 <h2 className="text-xl font-semibold">Fleet Overview</h2>
                                 <p className="text-sm text-gray-500">Live snapshot of your vehicles and assignments.</p>
                             </div>
-                            <Button onClick={() => setIsCreateOpen(true)}>Add Vehicle</Button>
+                            <Button onClick={() => setIsCreateOpen(true)}>
+                                <Plus />
+                                Add Vehicle
+                            </Button>
                         </div>
 
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
@@ -102,43 +117,74 @@ const FleetManagement = () => {
                                 <div className="mt-4 grid grid-cols-7 gap-2">
                                     {[32, 45, 38, 62, 71, 58, 66].map((value, index) => (
                                         <div key={index} className="flex flex-col items-center gap-2">
-                                            <div className="h-50 w-6 rounded-full bg-gray-100">
+                                            <div className="h-70 w-6 rounded-full bg-gray-100">
                                                 <div
-                                                    className="w-full rounded-full bg-gradient-to-t from-gray-200 to-black"
+                                                    className="w-full rounded-full bg-gradient-to-t from-gray-black to-gray-400"
                                                     style={{ height: `${value}%` }}
                                                 />
                                             </div>
-                                            <span className="text-[10px] text-gray-400">D{index + 1}</span>
+                                            <span className="text-[10px] text-gray-400">
+                                                {last7DaysLabels[index] ?? ''}
+                                            </span>
                                         </div>
                                     ))}
                                 </div>
                             </div>
 
-                            <div className="rounded-lg border bg-white p-5 shadow-sm">
-                                <div className="flex items-center justify-between">
-                                    <p className="font-semibold">Status Mix</p>
-                                    <span className="text-xs text-gray-500">Today</span>
+                            <div className='flex flex-col gap-4'>
+                                <div className="rounded-lg border bg-white p-5 shadow-sm">
+                                    <div className="flex items-center justify-between">
+                                        <p className="font-semibold">Status Mix</p>
+                                        <span className="text-xs text-gray-500">Today</span>
+                                    </div>
+                                    <div className="mt-4 space-y-3">
+                                        {[
+                                            { label: "Available", value: stats.available, color: "bg-emerald-500" },
+                                            { label: "Assigned", value: stats.assigned, color: "bg-sky-500" },
+                                            { label: "Unassigned", value: stats.unassigned, color: "bg-amber-500" },
+                                            { label: "Maintenance", value: stats.maintenance, color: "bg-rose-500" },
+                                        ].map((item) => {
+                                            const percent = stats.total ? Math.round((item.value / stats.total) * 100) : 0;
+                                            return (
+                                                <div key={item.label} className="space-y-1">
+                                                    <div className="flex items-center justify-between text-xs text-gray-500">
+                                                        <span>{item.label}</span>
+                                                        <span>{item.value} · {percent}%</span>
+                                                    </div>
+                                                    <div className="h-2 w-full rounded-full bg-gray-100">
+                                                        <div className={`h-2 rounded-full ${item.color}`} style={{ width: `${percent}%` }} />
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
                                 </div>
-                                <div className="mt-4 space-y-3">
-                                    {[
-                                        { label: "Available", value: stats.available, color: "bg-emerald-500" },
-                                        { label: "Assigned", value: stats.assigned, color: "bg-sky-500" },
-                                        { label: "Unassigned", value: stats.unassigned, color: "bg-amber-500" },
-                                        { label: "Maintenance", value: stats.maintenance, color: "bg-rose-500" },
-                                    ].map((item) => {
-                                        const percent = stats.total ? Math.round((item.value / stats.total) * 100) : 0;
-                                        return (
-                                            <div key={item.label} className="space-y-1">
-                                                <div className="flex items-center justify-between text-xs text-gray-500">
-                                                    <span>{item.label}</span>
-                                                    <span>{item.value} · {percent}%</span>
+
+                                <div>
+                                    {/* Recent Logs of vehicles */}
+                                    <div className="rounded-lg border bg-white p-5 shadow-sm">
+                                        <div className="flex items-center justify-between">
+                                            <p className="font-semibold">Recent Vehicle Logs</p>
+                                            <span className="text-xs text-gray-500">Latest 5</span>
+                                        </div>
+                                        <div className="mt-4 space-y-3">
+                                            {props.recentVehicleLogs.length === 0 && (
+                                                <p className="text-sm text-gray-500">No recent vehicle logs.</p>
+                                            )}
+                                            {props.recentVehicleLogs.map((log, index) => (
+                                                <div key={`${log.datelog}-${log.timelog}-${index}`} className="flex items-start justify-between gap-3">
+                                                    <div className="flex-1">
+                                                        <p className="text-sm text-gray-700">{log.description}</p>
+                                                        <p className="text-xs text-gray-400">{log.performed_to}</p>
+                                                    </div>
+                                                    <div className="text-right text-[11px] text-gray-400">
+                                                        <div>{log.datelog}</div>
+                                                        <div>{log.timelog}</div>
+                                                    </div>
                                                 </div>
-                                                <div className="h-2 w-full rounded-full bg-gray-100">
-                                                    <div className={`h-2 rounded-full ${item.color}`} style={{ width: `${percent}%` }} />
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

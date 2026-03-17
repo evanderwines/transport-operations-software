@@ -80,53 +80,6 @@ export default function SystemLogs() {
                     <Heading title='System Logs' />
 
 
-                    <div className="rounded-lg border bg-white p-5 shadow-sm">
-                        <form onSubmit={applyFilters} className="grid grid-cols-1 gap-4 lg:grid-cols-7">
-                            <div className="lg:col-span-2">
-                                <label className="text-xs uppercase text-gray-500">Search</label>
-                                <Input className='translate-y-[5px]' value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search description, module, action..." />
-                            </div>
-                            <div>
-                                <label className="text-xs uppercase text-gray-500">Action</label>
-                                <select
-                                    className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-                                    value={action}
-                                    onChange={(e) => setAction(e.target.value)}
-                                >
-                                    <option value="">All</option>
-                                    {props.actions.map((item) => (
-                                        <option key={item} value={item}>{item}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div>
-                                <label className="text-xs uppercase text-gray-500">Module</label>
-                                <select
-                                    className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-                                    value={module}
-                                    onChange={(e) => setModule(e.target.value)}
-                                >
-                                    <option value="">All</option>
-                                    {props.modules.map((item) => (
-                                        <option key={item} value={item}>{item}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div>
-                                <label className="text-xs uppercase text-gray-500">From</label>
-                                <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
-                            </div>
-                            <div>
-                                <label className="text-xs uppercase text-gray-500">To</label>
-                                <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
-                            </div>
-                            <div className="flex items-end gap-2 mb-2">
-                                <Button type="submit">Apply</Button>
-                                <Button type="button" variant="ghost" onClick={clearFilters}>Clear</Button>
-                            </div>
-                        </form>
-                    </div>
-
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
                         <div className="rounded-lg border bg-white p-4 shadow-sm">
                             <p className="text-xs uppercase text-gray-500">Total Entries</p>

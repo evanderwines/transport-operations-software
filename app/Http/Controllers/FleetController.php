@@ -6,6 +6,7 @@ use App\Models\Dispatch;
 use App\Models\Reservation;
 use App\Models\Driver;
 use App\Models\Vehicle;
+use App\Models\SystemLog;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -16,10 +17,16 @@ class FleetController extends Controller
     {
         $assignedDriverIds = Vehicle::whereNotNull('driver_id')->pluck('driver_id')->filter()->values();
         $availableDrivers = Driver::whereNotIn('driver_id', $assignedDriverIds)->get();
+        $recentVehicleLogs = SystemLog::where('module', 'VEHICLES')
+            ->orderBy('datelog', 'desc')
+            ->orderBy('timelog', 'desc')
+            ->limit(5)
+            ->get();
 
         return Inertia::render('admin/fleet-management', [
             'vehicles' => Vehicle::with('driver')->get(),
             'availableDrivers' => $availableDrivers,
+            'recentVehicleLogs' => $recentVehicleLogs,
         ]);
     }
 
