@@ -83,6 +83,12 @@ export default function RoutePolyline({ routePoints, driverPos, trimDebounceMs =
     }, [driverPos, remaining, map, trimDebounceMs]);
 
 
+    // keep map centered on the driver when focus is enabled
+    useEffect(() => {
+        if (!driverFocus || !driverPos) return;
+        setCenter(map);
+    }, [driverFocus, driverPos, map, setCenter]);
+
     // update the actual Leaflet polyline in place for smooth redraws
     useEffect(() => {
         if (polyRef.current) {
