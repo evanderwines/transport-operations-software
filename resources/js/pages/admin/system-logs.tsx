@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useMemo, useState } from 'react';
+import Heading from '@/components/heading';
 
 interface LogsPageProps {
     logs: PaginationType<SystemLogEntry[]>;
@@ -76,16 +77,11 @@ export default function SystemLogs() {
         <SidebarProvider defaultOpen={isOpen}>
             <AppLayout breadcrumbs={breadcrumbs}>
                 <div className="space-y-6 px-4 py-6">
-                    <div className="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
-                        <div>
-                            <h1 className="text-xl font-semibold">System Logs</h1>
-                            <p className="text-sm text-gray-500">Auditable activity across modules and actions.</p>
-                        </div>
-                    </div>
+                    <Heading title='System Logs' />
 
 
                     <div className="rounded-lg border bg-white p-5 shadow-sm">
-                        <form onSubmit={applyFilters} className="grid grid-cols-1 gap-4 lg:grid-cols-7">
+                        <form onSubmit={applyFilters} className="grid grid-cols-1 gap-4 lg:grid-cols-8">
                             <div className="lg:col-span-2">
                                 <label className="text-xs uppercase text-gray-500">Search</label>
                                 <Input className='mb-0' value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search description, module, action..." />
@@ -124,7 +120,7 @@ export default function SystemLogs() {
                                 <label className="text-xs uppercase text-gray-500">To</label>
                                 <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
                             </div>
-                            <div className="flex items-end gap-2 lg:col-span-6">
+                            <div className="flex items-end gap-2 lg:col-span-2">
                                 <Button type="submit">Apply</Button>
                                 <Button type="button" variant="ghost" onClick={clearFilters}>Clear</Button>
                             </div>

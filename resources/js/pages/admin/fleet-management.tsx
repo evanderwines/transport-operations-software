@@ -77,19 +77,19 @@ const FleetManagement = () => {
                             </div>
                             <div className="rounded-lg border bg-white p-4 shadow-sm">
                                 <p className="text-xs uppercase text-gray-500">Available</p>
-                                <p className="mt-2 text-2xl font-semibold text-emerald-600">{stats.available}</p>
+                                <p className="mt-2 text-2xl font-semibold">{stats.available}</p>
                             </div>
                             <div className="rounded-lg border bg-white p-4 shadow-sm">
                                 <p className="text-xs uppercase text-gray-500">Assigned</p>
-                                <p className="mt-2 text-2xl font-semibold text-sky-600">{stats.assigned}</p>
+                                <p className="mt-2 text-2xl font-semibold">{stats.assigned}</p>
                             </div>
                             <div className="rounded-lg border bg-white p-4 shadow-sm">
                                 <p className="text-xs uppercase text-gray-500">Unassigned</p>
-                                <p className="mt-2 text-2xl font-semibold text-amber-600">{stats.unassigned}</p>
+                                <p className="mt-2 text-2xl font-semibold">{stats.unassigned}</p>
                             </div>
                             <div className="rounded-lg border bg-white p-4 shadow-sm">
                                 <p className="text-xs uppercase text-gray-500">Maintenance</p>
-                                <p className="mt-2 text-2xl font-semibold text-rose-600">{stats.maintenance}</p>
+                                <p className="mt-2 text-2xl font-semibold">{stats.maintenance}</p>
                             </div>
                         </div>
 
@@ -102,9 +102,9 @@ const FleetManagement = () => {
                                 <div className="mt-4 grid grid-cols-7 gap-2">
                                     {[32, 45, 38, 62, 71, 58, 66].map((value, index) => (
                                         <div key={index} className="flex flex-col items-center gap-2">
-                                            <div className="h-28 w-6 rounded-full bg-gray-100">
+                                            <div className="h-50 w-6 rounded-full bg-gray-100">
                                                 <div
-                                                    className="w-full rounded-full bg-gradient-to-t from-sky-500 to-emerald-400"
+                                                    className="w-full rounded-full bg-gradient-to-t from-gray-200 to-black"
                                                     style={{ height: `${value}%` }}
                                                 />
                                             </div>
