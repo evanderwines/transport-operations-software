@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\SystemLog;
 
 class ProfileController extends Controller
 {
@@ -52,6 +53,15 @@ class ProfileController extends Controller
         $user = $request->user();
 
         Auth::logout();
+
+        SystemLog::create([
+            'datelog' => now()->toDateString(),
+            'timelog' => now()->format('H:i:s'),
+            'action' => 'DELETE',
+            'module' => 'USERS',
+            'performed_to' => (string) $user->id,
+            'description' => 'User was deleted.',
+        ]);
 
         $user->delete();
 

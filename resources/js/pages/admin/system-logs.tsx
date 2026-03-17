@@ -75,7 +75,7 @@ export default function SystemLogs() {
     return (
         <SidebarProvider defaultOpen={isOpen}>
             <AppLayout breadcrumbs={breadcrumbs}>
-                <div className="space-y-6">
+                <div className="space-y-6 px-4 py-6">
                     <div className="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
                         <div>
                             <h1 className="text-xl font-semibold">System Logs</h1>
@@ -83,30 +83,12 @@ export default function SystemLogs() {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-                        <div className="rounded-lg border bg-white p-4 shadow-sm">
-                            <p className="text-xs uppercase text-gray-500">Total Entries</p>
-                            <p className="mt-2 text-2xl font-semibold">{props.stats.total}</p>
-                        </div>
-                        <div className="rounded-lg border bg-white p-4 shadow-sm">
-                            <p className="text-xs uppercase text-gray-500">Adds</p>
-                            <p className="mt-2 text-2xl font-semibold text-emerald-600">{summary.adds}</p>
-                        </div>
-                        <div className="rounded-lg border bg-white p-4 shadow-sm">
-                            <p className="text-xs uppercase text-gray-500">Updates</p>
-                            <p className="mt-2 text-2xl font-semibold text-sky-600">{summary.updates}</p>
-                        </div>
-                        <div className="rounded-lg border bg-white p-4 shadow-sm">
-                            <p className="text-xs uppercase text-gray-500">Deletes</p>
-                            <p className="mt-2 text-2xl font-semibold text-rose-600">{summary.deletes}</p>
-                        </div>
-                    </div>
 
                     <div className="rounded-lg border bg-white p-5 shadow-sm">
-                        <form onSubmit={applyFilters} className="grid grid-cols-1 gap-4 lg:grid-cols-6">
+                        <form onSubmit={applyFilters} className="grid grid-cols-1 gap-4 lg:grid-cols-7">
                             <div className="lg:col-span-2">
                                 <label className="text-xs uppercase text-gray-500">Search</label>
-                                <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search description, module, action..." />
+                                <Input className='mb-0' value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search description, module, action..." />
                             </div>
                             <div>
                                 <label className="text-xs uppercase text-gray-500">Action</label>
@@ -148,6 +130,26 @@ export default function SystemLogs() {
                             </div>
                         </form>
                     </div>
+
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+                        <div className="rounded-lg border bg-white p-4 shadow-sm">
+                            <p className="text-xs uppercase text-gray-500">Total Entries</p>
+                            <p className="mt-2 text-2xl font-semibold">{props.stats.total}</p>
+                        </div>
+                        <div className="rounded-lg border bg-white p-4 shadow-sm">
+                            <p className="text-xs uppercase text-gray-500">Adds</p>
+                            <p className="mt-2 text-2xl font-semibold">{summary.adds}</p>
+                        </div>
+                        <div className="rounded-lg border bg-white p-4 shadow-sm">
+                            <p className="text-xs uppercase text-gray-500">Updates</p>
+                            <p className="mt-2 text-2xl font-semibold">{summary.updates}</p>
+                        </div>
+                        <div className="rounded-lg border bg-white p-4 shadow-sm">
+                            <p className="text-xs uppercase text-gray-500">Deletes</p>
+                            <p className="mt-2 text-2xl font-semibold">{summary.deletes}</p>
+                        </div>
+                    </div>
+
 
                     <div className="relative overflow-hidden rounded-lg border bg-white shadow-sm">
                         <div className="grid grid-cols-12 border-b bg-gray-50 px-4 py-3 text-xs font-semibold uppercase text-gray-500">

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
+use App\Models\SystemLog;
 
 class UserController extends Controller
 {
@@ -61,6 +62,14 @@ class UserController extends Controller
             'role' => $request->role,
         ]);
 
+        SystemLog::create([
+            'datelog' => now()->toDateString(),
+            'timelog' => now()->format('H:i:s'),
+            'action' => 'ADD',
+            'module' => 'USERS',
+            'performed_to' => (string) $user->id,
+            'description' => 'User record for '.$user->name.' was created.',
+        ]);
 
         return back()->with([
             'modal_status' => "success",
@@ -79,6 +88,15 @@ class UserController extends Controller
 
 
         $user->update($validated);
+
+        SystemLog::create([
+            'datelog' => now()->toDateString(),
+            'timelog' => now()->format('H:i:s'),
+            'action' => 'UPDATE',
+            'module' => 'USERS',
+            'performed_to' => (string) $user->id,
+            'description' => 'User information was updated.',
+        ]);
 
         return back()->with([
             'modal_status' => "success",

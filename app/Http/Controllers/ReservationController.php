@@ -20,6 +20,7 @@ use App\Http\Requests\Reservation\ProcessStep4Request;
 use App\Events\ReservationDeleted;
 use App\Events\ReservationCreated;
 use Illuminate\Support\Facades\Auth;
+use App\Models\SystemLog;
 
 class ReservationController extends Controller
 {
@@ -131,6 +132,15 @@ class ReservationController extends Controller
         broadcast(new ReservationDeleted($reservation_id));
 
         $reservation->delete();
+
+        SystemLog::create([
+            'datelog' => now()->toDateString(),
+            'timelog' => now()->format('H:i:s'),
+            'action' => 'DELETE',
+            'module' => 'RESERVATIONS',
+            'performed_to' => (string) $reservation_id,
+            'description' => 'Reservation was deleted.',
+        ]);
 
         $dispatch = Dispatch::where('reservation_id', $reservation_id)->firstOrFail();
 
@@ -404,6 +414,17 @@ class ReservationController extends Controller
                 'time'                => session('time'),
                 'cargo_details'       => session('cargo_details'),
                 'special_instructions' => session('special_instructions'),
+            ]);
+        }
+
+        if (! $isEdit) {
+            SystemLog::create([
+                'datelog' => now()->toDateString(),
+                'timelog' => now()->format('H:i:s'),
+                'action' => 'ADD',
+                'module' => 'RESERVATIONS',
+                'performed_to' => (string) $reservationId,
+                'description' => 'Reservation was created.',
             ]);
         }
 

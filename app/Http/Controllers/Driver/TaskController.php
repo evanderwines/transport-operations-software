@@ -11,6 +11,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 
 use App\Events\VehicleLocationUpdated;
+use App\Models\SystemLog;
 
 class TaskController extends Controller
 {
@@ -68,6 +69,15 @@ class TaskController extends Controller
         $reservation = Reservation::where('reservation_id', $reservation_id)->firstOrFail();
         $reservation->status = $validated['status'];
         $reservation->save();
+
+        SystemLog::create([
+            'datelog' => now()->toDateString(),
+            'timelog' => now()->format('H:i:s'),
+            'action' => 'UPDATE',
+            'module' => 'RESERVATIONS',
+            'performed_to' => (string) $reservation_id,
+            'description' => 'Reservation status updated to '.$validated['status'].'.',
+        ]);
 
         return back(303);
     }
