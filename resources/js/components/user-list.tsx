@@ -107,10 +107,7 @@ export default function UserList() {
                         <SlidersHorizontal />
                         Filter
                     </Button>
-                    <Button variant="outline" size="sm" className="hidden md:flex text-xs">
-                        <Download />
-                        Export
-                    </Button>
+                    
 
                     <Button
                         variant="outline"

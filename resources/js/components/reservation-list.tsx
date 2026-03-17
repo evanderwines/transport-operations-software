@@ -124,7 +124,6 @@ export default function ReseravtionList({ reservations }: { reservations: Pagina
 					</div> */}
 
 					<Button variant="outline" size="sm" className="hidden md:flex text-xs"><SlidersHorizontal />Filter</Button>
-					<Button variant="outline" size="sm" className="hidden md:flex text-xs"><Download />Export</Button>
 					<Link href={step("1", { query: { date: "today" } })}>
 						<Button variant="outline" size="sm" className="text-xs text-white bg-sky-500 hover:bg-sky-300 hover:text-white"><Plus />New Reservation</Button>
 					</Link>

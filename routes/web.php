@@ -73,6 +73,7 @@ require __DIR__.'/reservations.php';
 require __DIR__.'/active-dispatches.php';
 require __DIR__.'/fleet.php';
 require __DIR__.'/task.php';
+require __DIR__.'/logs.php';
 
 require __DIR__.'/my-reservations.php';
 require __DIR__.'/my-active-reservations.php';

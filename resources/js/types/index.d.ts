@@ -207,3 +207,12 @@ export interface VehicleLocation {
     lat: number;
     lng: number;
 }
+
+export interface SystemLogEntry {
+    datelog: string;
+    timelog: string;
+    action: string;
+    module: string;
+    performed_to: string;
+    description: string;
+}
