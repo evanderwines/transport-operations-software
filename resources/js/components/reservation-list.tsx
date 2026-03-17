@@ -116,13 +116,14 @@ export default function ReseravtionList({ reservations }: { reservations: Pagina
 					</div>
 					<div className="w-36">
 						<Select
+						
 							onValueChange={(e) => setServiceTypeFilter(e)}
 						>
 							<SelectTrigger>
 								<SelectValue placeholder="Service" />
 							</SelectTrigger>
 							<SelectContent>
-								<SelectItem value="">All</SelectItem>
+								<SelectItem value="none">All</SelectItem>
 
 								{(serviceTypes ?? []).map((service) => (
 									<SelectItem key={service} value={service}>
