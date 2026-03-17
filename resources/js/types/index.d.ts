@@ -86,9 +86,12 @@ export interface PaginationLink {
 
 export interface Vehicle {
     vehicle_id: string;
+    driver_id: string | null;
+    driver?: Driver | null;
     plate_number: string;
     model: string;
     capacity: string;
+    status: string;
     created_at: string;
     updated_at: string;
 }
@@ -188,15 +191,14 @@ export interface Driver {
 
 export interface Vehicle {
     vehicle_id: string;
-    driver_id: string;
-    driver: Driver;
+    driver_id: string | null;
+    driver?: Driver | null;
     plate_number: string;
     model: string;
     capacity: string;
     status: string;
     created_at: string;
     updated_at: string;
-    driver: Driver;
 }
 
 

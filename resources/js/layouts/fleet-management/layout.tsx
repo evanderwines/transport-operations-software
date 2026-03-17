@@ -14,7 +14,7 @@ import { index, show } from '@/routes/fleet';
 
 interface FleetmanagementLayoutProps {
     vehicles: Vehicle[];
-    selectedVehicle: Vehicle;
+    selectedVehicle?: Vehicle;
 }
 
 
@@ -51,8 +51,8 @@ export default function FleetmanagementLayout({ children, vehicles, selectedVehi
                                     </Avatar>
                                     <div className='flex-1'>
                                         <div className='flex items-center justify-between'>
-                                            <p className="text-sm">{vehicle.driver.name}</p>
-                                            <p className='text-xs text-gray-500'>{vehicle.status}</p>
+                                            <p className="text-sm">{vehicle.driver?.name ?? "Unassigned"}</p>
+                                            <p className='text-xs text-gray-500'>{vehicle.status ?? "UNKNOWN"}</p>
                                         </div>
                                         <p className='text-xs text-gray-500'>{vehicle.model}</p>
                                     </div>

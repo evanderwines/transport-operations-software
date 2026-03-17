@@ -12,4 +12,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('fleet/overview', [FleetController::class, 'index'])->name('fleet.index');
     
     Route::get('fleet/{vehicle_id}', [FleetController::class, 'show'])->name('fleet.show');
+    Route::post('fleet', [FleetController::class, 'store'])->name('fleet.store');
 });

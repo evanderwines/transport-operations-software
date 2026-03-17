@@ -18,7 +18,7 @@ class Vehicle extends Model
 
     protected $fillable = [
         'vehicle_id',
-        'drived_by',
+        'driver_id',
         'plate_number',
         'model',
         'capacity',
@@ -31,7 +31,7 @@ class Vehicle extends Model
 
     public function driver()
     {
-        return $this->hasOne(Driver::class, 'driver_id', 'driver_id');
+        return $this->belongsTo(Driver::class, 'driver_id', 'driver_id');
     }
 
     public function dispatch()

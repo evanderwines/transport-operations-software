@@ -38,9 +38,9 @@ const FleetDetails = () => {
                                 </Avatar>
                                 <div className='flex-1'>
                                     <div className='flex items-center justify-between'>
-                                        <p className="text-sm">{props.selectedVehicle.driver.name}</p>
+                                        <p className="text-sm">{props.selectedVehicle.driver?.name ?? "Unassigned"}</p>
                                     </div>
-                                    <p className='text-xs text-gray-500'>ID {props.selectedVehicle.driver_id}</p>
+                                    <p className='text-xs text-gray-500'>ID {props.selectedVehicle.driver_id ?? "N/A"}</p>
                                 </div>
                             </div>
 

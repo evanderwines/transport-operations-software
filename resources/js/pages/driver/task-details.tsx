@@ -64,7 +64,7 @@ const TaskDetails = () => {
             return { label: 'Arrived at Pick Up', status: 'WAITING' };
         }
         if (current === 'WAITING') {
-            return { label: 'Going to Dropoff', status: 'GOING TO PICKUP' };
+            return { label: 'Going to Dropoff', status: 'GOING TO DROPOFF' };
         }
         if (current === 'GOING TO DROPOFF') {
             return { label: 'Arrived at Dropoff', status: 'COMPLETE' };
