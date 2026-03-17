@@ -119,7 +119,7 @@ const FleetManagement = () => {
                                         <div key={index} className="flex flex-col items-center gap-2">
                                             <div className="h-70 w-6 rounded-full bg-gray-100">
                                                 <div
-                                                    className="w-full rounded-full bg-gradient-to-t from-gray-black to-gray-400"
+                                                    className="w-full rounded-full bg-gradient-to-t from-black to-gray-400"
                                                     style={{ height: `${value}%` }}
                                                 />
                                             </div>
@@ -141,7 +141,6 @@ const FleetManagement = () => {
                                         {[
                                             { label: "Available", value: stats.available, color: "bg-emerald-500" },
                                             { label: "Assigned", value: stats.assigned, color: "bg-sky-500" },
-                                            { label: "Unassigned", value: stats.unassigned, color: "bg-amber-500" },
                                             { label: "Maintenance", value: stats.maintenance, color: "bg-rose-500" },
                                         ].map((item) => {
                                             const percent = stats.total ? Math.round((item.value / stats.total) * 100) : 0;

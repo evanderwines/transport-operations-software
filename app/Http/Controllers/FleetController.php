@@ -20,7 +20,7 @@ class FleetController extends Controller
         $recentVehicleLogs = SystemLog::where('module', 'VEHICLES')
             ->orderBy('datelog', 'desc')
             ->orderBy('timelog', 'desc')
-            ->limit(5)
+            ->limit(3)
             ->get();
 
         return Inertia::render('admin/fleet-management', [
