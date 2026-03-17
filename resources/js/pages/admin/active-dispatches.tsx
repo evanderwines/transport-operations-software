@@ -26,13 +26,11 @@ const ActiveDispatches = () => {
 
 	const selectedReservation = props.selectedReservation || props.reservations[0] || null;
 	const [search, setSearch] = useState(props.filters?.q ?? '');
-	const [status, setStatus] = useState(props.filters?.status ?? '');
 
 	const applyFilters = (event: React.FormEvent) => {
 		event.preventDefault();
 		router.get('/active-dispatches', {
 			q: search || undefined,
-			status: status || undefined,
 		}, {
 			preserveState: true,
 			replace: true,
@@ -41,7 +39,6 @@ const ActiveDispatches = () => {
 
 	const clearFilters = () => {
 		setSearch('');
-		setStatus('');
 		router.get('/active-dispatches', {}, { replace: true });
 	};
 
@@ -57,7 +54,7 @@ const ActiveDispatches = () => {
 				<div className='flex flex-row'>
 					<div className='flex-1 p-4 pt-4.5'>
 						<p className='font-bold mb-4 text-sm'>Active disptaches</p>
-						<form onSubmit={applyFilters} className='flex flex-col gap-2 mb-3 md:flex-row md:items-end'>
+						<form onSubmit={applyFilters} className='flex items-end gap-2 mb-3'>
 							<div className='flex-1'>
 								<label className='text-xs uppercase text-gray-500'>Search</label>
 								<Input
@@ -66,19 +63,6 @@ const ActiveDispatches = () => {
 									value={search}
 									onChange={(e) => setSearch(e.target.value)}
 								/>
-							</div>
-							<div>
-								<label className='text-xs uppercase text-gray-500'>Status</label>
-								<select
-									className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-									value={status}
-									onChange={(e) => setStatus(e.target.value)}
-								>
-									<option value="">All</option>
-									{(props.statuses ?? []).map((item) => (
-										<option key={item} value={item}>{item}</option>
-									))}
-								</select>
 							</div>
 							<div className='flex gap-2'>
 								<Button type="submit" variant="outline" className="text-xs"><SlidersHorizontal />Filter</Button>

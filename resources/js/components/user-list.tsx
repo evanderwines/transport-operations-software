@@ -82,7 +82,16 @@ export default function UserList() {
         <div>
             <div className="justify-between flex items-center py-3 px-0 rounded-t-lg mb-1">
                 <p className="font-bold text-sm"></p>
-                <div className="flex gap-2.5">
+                <form onSubmit={applyFilters} className="flex items-end gap-2.5">
+                    <div className="w-56">
+                        <label className="text-xs uppercase text-gray-500">Search</label>
+                        <Input
+                            type="text"
+                            placeholder="Search name, email, id"
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
+                        />
+                    </div>
                     <div className="hidden md:block">
                         <ColumnsMenu
                             columns={columns}
@@ -93,40 +102,19 @@ export default function UserList() {
 
                     <Button variant="outline" className="hidden md:flex text-xs">
                         <SlidersHorizontal />
-                        Filter
-                    </Button>
-                    
-
-                    <Button
-                        variant="outline"
-                        onClick={() => setOpen(true)}
-                    >
-                        <Plus />
-                        New User
-                    </Button>
-                </div>
-            </div>
-
-            <form onSubmit={applyFilters} className="mb-4 flex flex-col gap-2 md:flex-row md:items-end">
-                <div className="flex-1">
-                    <label className="text-xs uppercase text-gray-500">Search</label>
-                    <Input
-                        type="text"
-                        placeholder="Search name, email, id"
-                        value={searchInput}
-                        onChange={(e) => setSearchInput(e.target.value)}
-                    />
-                </div>
-                <div className="flex gap-2">
-                    <Button type="submit" variant="outline" className="text-xs">
-                        <SlidersHorizontal />
                         Apply
                     </Button>
+                    
                     <Button type="button" variant="ghost" className="text-xs" onClick={clearFilters}>
                         Clear
                     </Button>
-                </div>
-            </form>
+
+                    <Button variant="outline" type="button" onClick={() => setOpen(true)}>
+                        <Plus />
+                        New User
+                    </Button>
+                </form>
+            </div>
 
             <DataTable
                 columns={columns.filter((_, index) => visibleColumns.includes(index))}

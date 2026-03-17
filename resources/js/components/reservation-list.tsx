@@ -81,71 +81,56 @@ export default function ReseravtionList({ reservations }: { reservations: Pagina
 
 	return (
 		<div>
-			<div className="justify-between flex items-center py-3 px-0 rounded-t-lg mb-1">
+			<div className="justify-between flex items-center py-3 px-0 rounded-t-lg mb-3">
 				<h2 className="text-xl font-bold">Reservations</h2>
-				<div className="flex gap-2.5">
-					<Button variant="outline" className="hidden md:flex text-xs">
-						<SlidersHorizontal />
-						Filter
-					</Button>
-					<Link href={step("1", { query: { date: "today" } })}>
-						<Button variant="outline" className="">
-							<Plus />
-							New Reservation
-						</Button>
-					</Link>
-				</div>
-			</div>
-
-			<form onSubmit={applyFilters} className="grid grid-cols-1 gap-3 rounded-lg border bg-white p-4 md:grid-cols-2 lg:grid-cols-6">
-				<div className="lg:col-span-2">
-					<label className="text-xs uppercase text-gray-500">Search</label>
-					<Input
-						type="text"
-						placeholder="Search reservation, customer, address"
-						value={searchInput}
-						onChange={(e) => setSearchInput(e.target.value)}
-					/>
-				</div>
-				<div>
-					<label className="text-xs uppercase text-gray-500">Status</label>
-					<select
-						className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-						value={statusFilter}
-						onChange={(e) => setStatusFilter(e.target.value)}
-					>
-						<option value="">All</option>
-						{(statuses ?? []).map((status) => (
-							<option key={status} value={status}>
-								{status}
-							</option>
-						))}
-					</select>
-				</div>
-				<div>
-					<label className="text-xs uppercase text-gray-500">Service</label>
-					<select
-						className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-						value={serviceTypeFilter}
-						onChange={(e) => setServiceTypeFilter(e.target.value)}
-					>
-						<option value="">All</option>
-						{(serviceTypes ?? []).map((service) => (
-							<option key={service} value={service}>
-								{service}
-							</option>
-						))}
-					</select>
-				</div>
-				<div>
-					<label className="text-xs uppercase text-gray-500">From</label>
-					<Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
-				</div>
-				<div>
-					<label className="text-xs uppercase text-gray-500">To</label>
-					<Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
-				</div>
-				<div className="flex items-end gap-2 lg:col-span-6">
+				<form onSubmit={applyFilters} className="flex flex-wrap items-end gap-2.5">
+					<div className="w-56">
+						<label className="text-xs uppercase text-gray-500">Search</label>
+						<Input
+							type="text"
+							placeholder="Search reservation, customer, address"
+							value={searchInput}
+							onChange={(e) => setSearchInput(e.target.value)}
+						/>
+					</div>
+					<div className="w-36">
+						<label className="text-xs uppercase text-gray-500">Status</label>
+						<select
+							className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+							value={statusFilter}
+							onChange={(e) => setStatusFilter(e.target.value)}
+						>
+							<option value="">All</option>
+							{(statuses ?? []).map((status) => (
+								<option key={status} value={status}>
+									{status}
+								</option>
+							))}
+						</select>
+					</div>
+					<div className="w-36">
+						<label className="text-xs uppercase text-gray-500">Service</label>
+						<select
+							className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+							value={serviceTypeFilter}
+							onChange={(e) => setServiceTypeFilter(e.target.value)}
+						>
+							<option value="">All</option>
+							{(serviceTypes ?? []).map((service) => (
+								<option key={service} value={service}>
+									{service}
+								</option>
+							))}
+						</select>
+					</div>
+					<div className="w-34">
+						<label className="text-xs uppercase text-gray-500">From</label>
+						<Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
+					</div>
+					<div className="w-34">
+						<label className="text-xs uppercase text-gray-500">To</label>
+						<Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+					</div>
 					<Button type="submit" variant="outline" className="text-xs">
 						<SlidersHorizontal />
 						Filter
@@ -153,8 +138,14 @@ export default function ReseravtionList({ reservations }: { reservations: Pagina
 					<Button type="button" variant="ghost" className="text-xs" onClick={clearFilters}>
 						Clear
 					</Button>
-				</div>
-			</form>
+					<Link href={step("1", { query: { date: "today" } })}>
+						<Button variant="outline" className="">
+							<Plus />
+							New Reservation
+						</Button>
+					</Link>
+				</form>
+			</div>
 
 			<div className="mt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 				{reservation.map((r) => (
