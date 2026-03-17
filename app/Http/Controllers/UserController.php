@@ -16,28 +16,67 @@ class UserController extends Controller
 {
     public function customer()
     {
+        $search = trim((string) request()->query('q', ''));
+        $query = User::where('role', 'CUSTOMER')
+            ->select('id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at');
+
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('email', 'like', '%'.$search.'%')
+                    ->orWhere('id', 'like', '%'.$search.'%');
+            });
+        }
+
         return Inertia::render('admin/users', [
-            'users' => User::where('role', 'CUSTOMER')
-                ->select('id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at')
-                ->paginate(20),
+            'users' => $query->paginate(20)->withQueryString(),
+            'filters' => [
+                'q' => $search,
+            ],
         ]);
     }
 
     public function driver()
     {
+        $search = trim((string) request()->query('q', ''));
+        $query = User::where('role', 'DRIVER')
+            ->select('id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at');
+
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('email', 'like', '%'.$search.'%')
+                    ->orWhere('id', 'like', '%'.$search.'%');
+            });
+        }
+
         return Inertia::render('admin/users', [
-            'users' => User::where('role', 'DRIVER')
-                ->select('id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at')
-                ->paginate(20),
+            'users' => $query->paginate(20)->withQueryString(),
+            'filters' => [
+                'q' => $search,
+            ],
         ]);
     }
 
     public function admin()
     {
+        $search = trim((string) request()->query('q', ''));
+        $query = User::where('role', 'ADMINISTRATOR')
+            ->select('id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at');
+
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('email', 'like', '%'.$search.'%')
+                    ->orWhere('id', 'like', '%'.$search.'%');
+            });
+        }
+
         return Inertia::render('admin/users', [
-            'users' => User::where('role', 'ADMINISTRATOR')
-                ->select('id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at')
-                ->paginate(20),
+            'users' => $query->paginate(20)->withQueryString(),
+            'filters' => [
+                'q' => $search,
+            ],
         ]);
     }
 

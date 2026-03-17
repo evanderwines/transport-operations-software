@@ -1,92 +1,50 @@
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem, PaginationType } from "@/types";
-import { Head, usePage } from "@inertiajs/react";
+import { PaginationType } from "@/types";
+import { usePage, router, Link } from "@inertiajs/react";
 import { type Reservation } from "@/types";
-import { Tab } from "@headlessui/react";
 import { Button } from "./ui/button";
-import { DataTable } from "@/components/data-table";
-import { useEffect, useState } from "react"; import ReservationsLayout from "@/layouts/reservations/layout";
-import { Pagination } from "./pagination";
-import { SlidersHorizontal, UserPlus, PencilLine, Download, Plus } from "lucide-react";
-import { Link } from "@inertiajs/react";
-import { DeleteReservation } from "./delete-reservation";
-import { show, step } from "@/routes/reservations";
-import { ColumnsMenu } from "./columns-menu";
-import '../bootstrap';
-import Task from "./task";
-import reservations from '../routes/reservations/index';
+import { Input } from "./ui/input";
+import { useEffect, useState } from "react";
+import { SlidersHorizontal, Plus } from "lucide-react";
+import { step } from "@/routes/reservations";
+import "../bootstrap";
 import ReservationCard from "./reservation-card";
 
-const breadcrumbs: BreadcrumbItem[] = [
-	{
-		title: 'User Management',
-		href: '/user-management/students',
-	},
-];
-
-const columns = [
-	'Reservation ID',
-	'Customer Name',
-	'Email',
-	'Contact Number',
-	'Status',
-	'Pickup Address',
-	'Pickup LatLng',
-	'Dropoff Address',
-	'Dropoff LatLng',
-	'Date',
-	'Time',
-	'Service Type',
-	'Cargo Details',
-	'Special Instructions',
-	'Created At',
-	'Updated At',
-];
-
-
-const defaultColumns = [
-	0,
-	1,
-	4,
-	5,
-	7,
-	9,
-	10,
-]
-
-
-// const pusher = window.Echo.connector.pusher; 
-// pusher.connection.bind('connected', () => { console.log("✅ Connected to Pusher"); });
-
-
 export default function ReseravtionList({ reservations }: { reservations: PaginationType<Reservation[]> }) {
-
-
 	const [reservation, setReservation] = useState<Reservation[]>(reservations.data);
-	const [visibleColumns, setVisibleColumns] = useState<number[]>(JSON.parse(sessionStorage.getItem('visibleColumns') || '[]').length > 0 ? JSON.parse(sessionStorage.getItem('visibleColumns') || '[]') : defaultColumns);
-	const [filteredReservations, setFilteredReservations] = useState<Reservation[][]>(reservation.map(student => Object.values(student)).map(row => row.filter((_, index) => visibleColumns.includes(index))));
-	const [searchInput, setSearchInput] = useState('');
+	const { filters, statuses, serviceTypes } = usePage<{
+		filters?: { q?: string; status?: string; service_type?: string; date_from?: string; date_to?: string };
+		statuses?: string[];
+		serviceTypes?: string[];
+	}>().props;
+
+	const [searchInput, setSearchInput] = useState(filters?.q ?? "");
+	const [statusFilter, setStatusFilter] = useState(filters?.status ?? "");
+	const [serviceTypeFilter, setServiceTypeFilter] = useState(filters?.service_type ?? "");
+	const [dateFrom, setDateFrom] = useState(filters?.date_from ?? "");
+	const [dateTo, setDateTo] = useState(filters?.date_to ?? "");
 
 	const updateTable = (newReservation: PaginationType<Reservation[]>) => {
 		setReservation(newReservation.data);
-	}
+	};
+
+	useEffect(() => {
+		setReservation(reservations.data);
+	}, [reservations.data]);
 
 	useEffect(() => {
 		const channel = window.Echo.channel("reservations");
 
 		channel.listen(".ReservationCreated", (e: { reservation: Reservation }) => {
-			setReservation(prev => {
-				if (prev.some(r => r.reservation_id === e.reservation.reservation_id)) {
+			setReservation((prev) => {
+				if (prev.some((r) => r.reservation_id === e.reservation.reservation_id)) {
 					return prev;
 				}
 				return [...prev, e.reservation];
 			});
 		});
 
-
 		channel.listen(".ReservationDeleted", (e: { reservation_id: string }) => {
-			console.log(e);
-			setReservation(prev => prev.filter(item => item.reservation_id !== e.reservation_id));
+			setReservation((prev) => prev.filter((item) => item.reservation_id !== e.reservation_id));
 		});
 
 		return () => {
@@ -94,62 +52,115 @@ export default function ReseravtionList({ reservations }: { reservations: Pagina
 		};
 	}, []);
 
+	const applyFilters = (event: React.FormEvent) => {
+		event.preventDefault();
+		router.get(
+			"/reservations",
+			{
+				q: searchInput || undefined,
+				status: statusFilter || undefined,
+				service_type: serviceTypeFilter || undefined,
+				date_from: dateFrom || undefined,
+				date_to: dateTo || undefined,
+			},
+			{
+				preserveState: true,
+				replace: true,
+			}
+		);
+	};
 
-
-	useEffect(() => {
-
-		sessionStorage.setItem('visibleColumns', JSON.stringify(visibleColumns));
-
-		const lowerSearchInput = searchInput.toLowerCase();
-		const newFilteredStudents = reservation.map(reservation =>
-			// Convert each reservation object's values to array and filter based on visible columns
-			Object.values(reservation)).map(row =>
-				row.filter((_, index) =>
-					visibleColumns.includes(index))).filter(row => {
-						// Check if any item in the row includes the search input
-						return row.some(item =>
-							item.toString().toLowerCase().includes(lowerSearchInput)
-						);
-					});
-		setFilteredReservations(newFilteredStudents);
-	}, [reservation, visibleColumns, searchInput])
+	const clearFilters = () => {
+		setSearchInput("");
+		setStatusFilter("");
+		setServiceTypeFilter("");
+		setDateFrom("");
+		setDateTo("");
+		router.get("/reservations", {}, { replace: true });
+	};
 
 	return (
 		<div>
 			<div className="justify-between flex items-center py-3 px-0 rounded-t-lg mb-1">
 				<h2 className="text-xl font-bold">Reservations</h2>
 				<div className="flex gap-2.5">
-					{/* <div className="hidden md:block">
-						<ColumnsMenu columns={columns} visibleColumns={visibleColumns} setVisibleColumns={setVisibleColumns} />
-					</div> */}
-
-					<Button variant="outline" size="sm" className="hidden md:flex text-xs"><SlidersHorizontal />Filter</Button>
+					<Button variant="outline" className="hidden md:flex text-xs">
+						<SlidersHorizontal />
+						Filter
+					</Button>
 					<Link href={step("1", { query: { date: "today" } })}>
-						<Button variant="outline" size="sm" className="text-xs text-white bg-sky-500 hover:bg-sky-300 hover:text-white"><Plus />New Reservation</Button>
+						<Button variant="outline" className="">
+							<Plus />
+							New Reservation
+						</Button>
 					</Link>
-
 				</div>
 			</div>
-			{/* <channelDataTable
-				columns={columns.filter((_, index) => visibleColumns.includes(index))}
-				data={filteredReservations}
-				searchInput={searchInput}
-				doDelete={doDelete}
-				viewLink={(id) => retrieve.url({ reservation_id: id })}
-			/>
-			<Pagination data={reservations} /> */}
 
+			<form onSubmit={applyFilters} className="grid grid-cols-1 gap-3 rounded-lg border bg-white p-4 md:grid-cols-2 lg:grid-cols-6">
+				<div className="lg:col-span-2">
+					<label className="text-xs uppercase text-gray-500">Search</label>
+					<Input
+						type="text"
+						placeholder="Search reservation, customer, address"
+						value={searchInput}
+						onChange={(e) => setSearchInput(e.target.value)}
+					/>
+				</div>
+				<div>
+					<label className="text-xs uppercase text-gray-500">Status</label>
+					<select
+						className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+						value={statusFilter}
+						onChange={(e) => setStatusFilter(e.target.value)}
+					>
+						<option value="">All</option>
+						{(statuses ?? []).map((status) => (
+							<option key={status} value={status}>
+								{status}
+							</option>
+						))}
+					</select>
+				</div>
+				<div>
+					<label className="text-xs uppercase text-gray-500">Service</label>
+					<select
+						className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+						value={serviceTypeFilter}
+						onChange={(e) => setServiceTypeFilter(e.target.value)}
+					>
+						<option value="">All</option>
+						{(serviceTypes ?? []).map((service) => (
+							<option key={service} value={service}>
+								{service}
+							</option>
+						))}
+					</select>
+				</div>
+				<div>
+					<label className="text-xs uppercase text-gray-500">From</label>
+					<Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
+				</div>
+				<div>
+					<label className="text-xs uppercase text-gray-500">To</label>
+					<Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+				</div>
+				<div className="flex items-end gap-2 lg:col-span-6">
+					<Button type="submit" variant="outline" className="text-xs">
+						<SlidersHorizontal />
+						Filter
+					</Button>
+					<Button type="button" variant="ghost" className="text-xs" onClick={clearFilters}>
+						Clear
+					</Button>
+				</div>
+			</form>
 
 			<div className="mt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-				{reservation.map((r, index) => (
-					<ReservationCard reservation={r} updateTable={updateTable} />
+				{reservation.map((r) => (
+					<ReservationCard key={r.reservation_id} reservation={r} updateTable={updateTable} />
 				))}
 			</div>
-
-
 		</div>
-
-
-
 	);
 }

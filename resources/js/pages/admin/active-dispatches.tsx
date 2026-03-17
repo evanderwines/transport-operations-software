@@ -1,17 +1,17 @@
 import ActiveDisptach from '@/components/active-dispatch'
 import MapRoute from '@/components/map-route'
-import SearchBar from '@/components/search-bar'
 import { Button } from '@/components/ui/button'
 import AppLayout from '@/layouts/app-layout'
 import { index } from '@/routes/active-dispatches'
 import { BreadcrumbItem, Reservation, SharedData } from '@/types'
-import { usePage } from '@inertiajs/react'
+import { usePage, router } from '@inertiajs/react'
 import { ChevronDown, CornerDownRight, FlagTriangleRight, Gauge, MapPin, Pin, Route, SlidersHorizontal, Star, Timer } from 'lucide-react'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import TabOrderDetails from '@/components/tab-order-details'
 import { useState } from 'react'
 import TabDriverInformation from '@/components/tab-driver-information'
 import FloatingReservationDetails from '@/components/floating-reservation-details'
+import { Input } from '@/components/ui/input'
 
 const breadcrumbs: BreadcrumbItem[] = [
 	{
@@ -21,10 +21,29 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const ActiveDispatches = () => {
-	const props = usePage<{ reservations: Reservation[], selectedReservation: Reservation }>().props;
+	const props = usePage<{ reservations: Reservation[], selectedReservation?: Reservation, filters?: { q?: string; status?: string }, statuses?: string[] }>().props;
 	const isOpen = usePage<SharedData>().props.sidebarOpen;
 
 	const selectedReservation = props.selectedReservation || props.reservations[0] || null;
+	const [search, setSearch] = useState(props.filters?.q ?? '');
+	const [status, setStatus] = useState(props.filters?.status ?? '');
+
+	const applyFilters = (event: React.FormEvent) => {
+		event.preventDefault();
+		router.get('/active-dispatches', {
+			q: search || undefined,
+			status: status || undefined,
+		}, {
+			preserveState: true,
+			replace: true,
+		});
+	};
+
+	const clearFilters = () => {
+		setSearch('');
+		setStatus('');
+		router.get('/active-dispatches', {}, { replace: true });
+	};
 
 
 
@@ -38,25 +57,48 @@ const ActiveDispatches = () => {
 				<div className='flex flex-row'>
 					<div className='flex-1 p-4 pt-4.5'>
 						<p className='font-bold mb-4 text-sm'>Active disptaches</p>
-						<div className='flex items-center gap-2 mb-3'>
-							<SearchBar />
-							<Button variant="outline" className="hidden md:flex text-xs"><SlidersHorizontal />Filter</Button>
-						</div>
+						<form onSubmit={applyFilters} className='flex flex-col gap-2 mb-3 md:flex-row md:items-end'>
+							<div className='flex-1'>
+								<label className='text-xs uppercase text-gray-500'>Search</label>
+								<Input
+									type="text"
+									placeholder="Search reservation, customer, driver"
+									value={search}
+									onChange={(e) => setSearch(e.target.value)}
+								/>
+							</div>
+							<div>
+								<label className='text-xs uppercase text-gray-500'>Status</label>
+								<select
+									className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+									value={status}
+									onChange={(e) => setStatus(e.target.value)}
+								>
+									<option value="">All</option>
+									{(props.statuses ?? []).map((item) => (
+										<option key={item} value={item}>{item}</option>
+									))}
+								</select>
+							</div>
+							<div className='flex gap-2'>
+								<Button type="submit" variant="outline" className="text-xs"><SlidersHorizontal />Filter</Button>
+								<Button type="button" variant="ghost" className="text-xs" onClick={clearFilters}>Clear</Button>
+							</div>
+						</form>
 
 						<div>
 							{
+								props.reservations.length > 0 ? 
 								props.reservations.map((reservation) => (
 									<ActiveDisptach key={reservation.reservation_id} reservation={reservation} selectedReservation={selectedReservation.reservation_id} />
-								))
+								)):
+								<div className='mt-5 text-gray-600'>
+									No active reservations
+								</div>
 							}
 						</div>
 					</div>
 					<div className='flex-3 relative rounded-s-md overflow-hidden bg-gray-200' style={{ height: "calc(100vh - 85px)", width: "100%" }}>
-
-
-
-
-
 
 						{selectedReservation && <>
 							<FloatingReservationDetails reservation={selectedReservation} />

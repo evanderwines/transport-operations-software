@@ -1,43 +1,29 @@
 import { useEffect, useState } from "react";
-import { Head, usePage, Link } from "@inertiajs/react";
-import { Tab } from "@headlessui/react";
-import { SlidersHorizontal, Download, Plus } from "lucide-react";
+import { usePage, router } from "@inertiajs/react";
+import { SlidersHorizontal, Plus } from "lucide-react";
 
 import { Button } from "./ui/button";
 import { DataTable } from "@/components/data-table";
-import { Pagination } from "./pagination";
 import { ColumnsMenu } from "./columns-menu";
-import { BreadcrumbItem, PaginationType } from "@/types";
+import { PaginationType } from "@/types";
 import { type User } from "@/types";
 import '../bootstrap';
-import user, { customer } from "@/routes/user";
 import CreateUserModal from "./create-user-modal";
 import UserViewModal from "./user-view-modal";
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: "User Management",
-        href: "/users",
-    },
-    {
-        title: "Customers",
-        href: customer().url,
-    },
-];
+import { Input } from "./ui/input";
 
 const columns = [
     "ID",
     "Name",
     "Email",
-    "Verified At",
     "Created At",
     "Updated At",
 ];
 
-const defaultColumns = [0, 1, 2, 3, 4, 5];
+const defaultColumns = [0, 1, 2, 3, 4];
 
 export default function UserList() {
-    const { props } = usePage<{ users: PaginationType<User[]> }>();
+    const { props } = usePage<{ users: PaginationType<User[]>; filters?: { q?: string } }>();
 
 
     const [users, setUsers] = useState<User[]>(props.users.data);
@@ -50,18 +36,12 @@ export default function UserList() {
 
     const [visibleColumns, setVisibleColumns] = useState<number[]>(initialVisible);
 
-    const [filteredUsers, setFilteredUsers] = useState<string[][]>([]);
+    const [searchInput, setSearchInput] = useState(props.filters?.q ?? "");
 
     useEffect(() => {
         setUsers(props.users.data);
-        setFilteredUsers(users
-            .map((u) => Object.values(u))
-            .map((row) => row.filter((_, idx) => visibleColumns.includes(idx)))
-            .map((row) => row.map((cell) => (cell === null ? "" : String(cell))))
-        )
-    }, [props.users])
+    }, [props.users]);
 
-    const [searchInput, setSearchInput] = useState("");
     const [selectedUserId, setSelectedUserId] = useState<string>("");
     const [isOpenDeleteModal, setIsOpenDeleteModal] = useState<boolean>(false);
 
@@ -76,19 +56,27 @@ export default function UserList() {
 
     useEffect(() => {
         sessionStorage.setItem(sessionKey, JSON.stringify(visibleColumns));
+    }, [visibleColumns]);
 
-        const lowerSearch = searchInput.toLowerCase();
+    const applyFilters = (event: React.FormEvent) => {
+        event.preventDefault();
+        router.get(window.location.pathname, {
+            q: searchInput || undefined,
+        }, {
+            preserveState: true,
+            replace: true,
+        });
+    };
 
-        const newFiltered = users
-            .map((u) => Object.values(u))
-            .map((row) => row.filter((_, idx) => visibleColumns.includes(idx)))
-            .map((row) => row.map((cell) => (cell === null ? "" : String(cell))))
-            .filter((row) =>
-                row.some((cell) => cell.toLowerCase().includes(lowerSearch))
-            );
+    const clearFilters = () => {
+        setSearchInput("");
+        router.get(window.location.pathname, {}, { replace: true });
+    };
 
-        setFilteredUsers(newFiltered);
-    }, [users, visibleColumns, searchInput]);
+    const tableData = users
+        .map((u) => Object.values(u))
+        .map((row) => row.filter((_, idx) => visibleColumns.includes(idx)))
+        .map((row) => row.map((cell) => (cell === null ? "" : String(cell))));
 
     return (
         <div>
@@ -103,7 +91,7 @@ export default function UserList() {
                         />
                     </div>
 
-                    <Button variant="outline" size="sm" className="hidden md:flex text-xs">
+                    <Button variant="outline" className="hidden md:flex text-xs">
                         <SlidersHorizontal />
                         Filter
                     </Button>
@@ -111,8 +99,6 @@ export default function UserList() {
 
                     <Button
                         variant="outline"
-                        size="sm"
-                        className="text-xs text-white bg-sky-500 hover:bg-sky-300 hover:text-white"
                         onClick={() => setOpen(true)}
                     >
                         <Plus />
@@ -121,9 +107,30 @@ export default function UserList() {
                 </div>
             </div>
 
+            <form onSubmit={applyFilters} className="mb-4 flex flex-col gap-2 md:flex-row md:items-end">
+                <div className="flex-1">
+                    <label className="text-xs uppercase text-gray-500">Search</label>
+                    <Input
+                        type="text"
+                        placeholder="Search name, email, id"
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                    />
+                </div>
+                <div className="flex gap-2">
+                    <Button type="submit" variant="outline" className="text-xs">
+                        <SlidersHorizontal />
+                        Apply
+                    </Button>
+                    <Button type="button" variant="ghost" className="text-xs" onClick={clearFilters}>
+                        Clear
+                    </Button>
+                </div>
+            </form>
+
             <DataTable
                 columns={columns.filter((_, index) => visibleColumns.includes(index))}
-                data={filteredUsers}
+                data={tableData}
                 searchInput={searchInput}
                 doDelete={doDelete}
                 setViewModalId={setViewModalId}

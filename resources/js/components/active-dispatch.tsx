@@ -1,7 +1,7 @@
 import { Reservation } from '@/types'
 import StatusTag from './status-tag'
 import { Separator } from './ui/separator';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { show } from '@/routes/active-dispatches';
 import { useEffect, useState } from 'react';
 import { LatLng } from 'leaflet';
@@ -9,6 +9,7 @@ import { LatLng } from 'leaflet';
 
 
 const ActiveDisptach = ({ reservation, selectedReservation }: { reservation: Reservation, selectedReservation: string }) => {
+	const { props } = usePage<{ filters?: { q?: string; status?: string } }>();
 
 	const startDate = new Date(reservation.dispatch.schedule);
 	const endDate = new Date(reservation.date);
@@ -19,7 +20,11 @@ const ActiveDisptach = ({ reservation, selectedReservation }: { reservation: Res
 	
 
 	return (
-		<Link as="div" className={'bg-gray-100 rounded-sm mb-2 py-3 cursor-pointer ' + `${selectedReservation === reservation.reservation_id ? 'border-s-3 border-blue-400 bg-sky-50' : ''}`} href={show(reservation.reservation_id)}>
+		<Link
+			as="div"
+			className={'bg-gray-100 rounded-sm mb-2 py-3 cursor-pointer ' + `${selectedReservation === reservation.reservation_id ? 'border-s-3 border-blue-400 bg-sky-50' : ''}`}
+			href={show(reservation.reservation_id, { query: { q: props.filters?.q, status: props.filters?.status } })}
+		>
 			<div className="px-3">
 				<div className='flex justify-between items-center mb-1'>
 					<p className='text-sm'>ID <span className='id-code-font'>{

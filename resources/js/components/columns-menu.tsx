@@ -21,7 +21,7 @@ export function ColumnsMenu({ columns, visibleColumns, setVisibleColumns }: Colu
 
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button size="sm" variant='outline' className="text-xs">
+                <Button variant='outline' className="text-xs">
                     Columns
                     <ChevronsUpDown className="size-4" />
                 </Button>

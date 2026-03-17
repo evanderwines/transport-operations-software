@@ -89,8 +89,57 @@ class ReservationController extends Controller
         if ($request->user()->role === 'CUSTOMER') {
             return redirect()->route('my-reservations.index');
         }
+        $query = Reservation::with(['customer', 'dispatch']);
+
+        $search = trim((string) $request->query('q', ''));
+        $status = $request->query('status');
+        $serviceType = $request->query('service_type');
+        $dateFrom = $request->query('date_from');
+        $dateTo = $request->query('date_to');
+
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('reservation_id', 'like', '%'.$search.'%')
+                    ->orWhere('pickup_address', 'like', '%'.$search.'%')
+                    ->orWhere('dropoff_address', 'like', '%'.$search.'%')
+                    ->orWhereHas('customer', function ($cq) use ($search) {
+                        $cq->where('name', 'like', '%'.$search.'%')
+                            ->orWhere('email', 'like', '%'.$search.'%');
+                    });
+            });
+        }
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        if ($serviceType) {
+            $query->where('service_type', $serviceType);
+        }
+
+        if ($dateFrom && $dateTo) {
+            $query->whereBetween('date', [$dateFrom, $dateTo]);
+        } elseif ($dateFrom) {
+            $query->where('date', '>=', $dateFrom);
+        } elseif ($dateTo) {
+            $query->where('date', '<=', $dateTo);
+        }
+
+        $reservations = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+        $statuses = Reservation::query()->select('status')->distinct()->orderBy('status')->pluck('status');
+        $serviceTypes = Reservation::query()->select('service_type')->distinct()->orderBy('service_type')->pluck('service_type');
+
         return Inertia::render('admin/reservations', [
-            'reservations' => Reservation::with(['customer', 'dispatch'])->orderBy('created_at', 'desc')->paginate(10)->withQueryString(),
+            'reservations' => $reservations,
+            'filters' => [
+                'q' => $search,
+                'status' => $status,
+                'service_type' => $serviceType,
+                'date_from' => $dateFrom,
+                'date_to' => $dateTo,
+            ],
+            'statuses' => $statuses,
+            'serviceTypes' => $serviceTypes,
         ]);
     }
 

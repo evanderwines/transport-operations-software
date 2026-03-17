@@ -117,9 +117,9 @@ const FleetManagement = () => {
                                 <div className="mt-4 grid grid-cols-7 gap-2">
                                     {[32, 45, 38, 62, 71, 58, 66].map((value, index) => (
                                         <div key={index} className="flex flex-col items-center gap-2">
-                                            <div className="h-70 w-6 rounded-full bg-gray-100">
+                                            <div className="h-75 w-6 rounded-full bg-gray-100">
                                                 <div
-                                                    className="w-full rounded-full bg-gradient-to-t from-black to-gray-400"
+                                                    className="w-full rounded-full bg-gradient-to-t from-black to-black"
                                                     style={{ height: `${value}%` }}
                                                 />
                                             </div>
