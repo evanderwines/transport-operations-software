@@ -128,7 +128,7 @@ const TaskDetails = () => {
 
                     <div className='relative' style={{ width: '100vw', height: '70vh' }}>
 
-                        <Button className='absolute top-5 left-[50%] -translate-x-[50%] z-99' size="icon" variant="outline" onClick={() => setDriverFocus(!driverFocus)}>
+                        <Button className='absolute bottom-10 right-10 z-99' size="icon" variant="outline" onClick={() => setDriverFocus(!driverFocus)}>
                             {
                                 driverFocus ? <LocateFixed /> : <Locate /> 
                             }
@@ -139,8 +139,6 @@ const TaskDetails = () => {
                     </div>
 
                     <div className='rounded-xl bg-white -translate-y-10'>
-                        <div className='mb-3 rounded mx-auto translate-y-2 w-15 h-1 bg-gray-500'></div>
-
                         <div className="flex justify-between items-center p-3">
 
                             <div className=''>
