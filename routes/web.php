@@ -30,6 +30,27 @@ Route::middleware(['auth:sanctum'])->group(function () {
     })->name('dashboard');
 });
 
+if (config('app.debug')) {
+    Route::get('__auth_debug', function (Request $request) {
+        $token = $request->cookie('auth_token');
+        $pat = $token ? \Laravel\Sanctum\PersonalAccessToken::findToken($token) : null;
+
+        return response()->json([
+            'path' => $request->path(),
+            'has_cookie' => $request->cookies->has('auth_token'),
+            'cookie_len' => $token ? strlen((string) $token) : 0,
+            'has_auth_header' => $request->headers->has('Authorization'),
+            'auth_sanctum_user_id' => auth('sanctum')->user()?->id,
+            'auth_web_user_id' => auth('web')->user()?->id,
+            'token_found' => (bool) $pat,
+            'token_id' => $pat?->id,
+            'token_name' => $pat?->name,
+            'token_expires_at' => $pat?->expires_at?->toIso8601String(),
+            'token_last_used_at' => $pat?->last_used_at?->toIso8601String(),
+        ]);
+    });
+}
+
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
