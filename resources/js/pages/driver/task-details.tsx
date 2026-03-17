@@ -12,7 +12,7 @@ import '../../bootstrap';
 import CurrentLocation from '@/components/current_location';
 import axios from 'axios';
 import { Separator } from '@/components/ui/separator';
-import { ChevronUp, Dot, MapPin, MessageSquare, Phone, Send } from 'lucide-react';
+import { ChevronUp, Dot, Locate, LocateFixed, MapPin, MessageSquare, Phone, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 
@@ -55,6 +55,8 @@ const TaskDetails = () => {
     const [routes, setRoute] = useState<LatLng[]>([]);
     const [vehicleLoc, setVehicleLoc] = useState()
     const [status, setStatus] = useState<string>(props.reservation.status || '');
+
+    const [driverFocus, setDriverFocus] = useState(false);
 
     const getNextAction = (current: string) => {
         if (!current || current === 'ASSIGNED' || current === 'PENDING') {
@@ -124,7 +126,14 @@ const TaskDetails = () => {
             <AppLayout breadcrumbs={breadcrumbs}>
                 <div className=''>
 
-                    <div className='' style={{ width: '100vw', height: '70vh' }}>
+                    <div className='relative' style={{ width: '100vw', height: '70vh' }}>
+
+                        <Button size="icon" variant="outline" onClick={() => setDriverFocus(!driverFocus)}>
+                            {
+                                driverFocus ? <LocateFixed /> : <Locate /> 
+                            }
+                        </Button>
+
                         <MapRoute reservation={props.reservation} padding={0} />
 
                     </div>

@@ -13,9 +13,10 @@ import { LoaderCircle } from 'lucide-react';
 interface MapRouteProps {
     reservation: Reservation;
     padding?: number;
+    driverFocus?: boolean;
 }
 
-const MapRoute = ({ reservation, padding = 0 }: MapRouteProps) => {
+const MapRoute = ({ reservation, padding = 0, driverFocus = false }: MapRouteProps) => {
 
     const [vehicleLoc, setVehicleLoc] = useState<LatLng | null>(null);
     const [routePoints, setRoutePoints] = useState<LatLng[]>([]);
