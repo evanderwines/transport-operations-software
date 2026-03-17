@@ -14,7 +14,11 @@ Route::get('/', function () {
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('dashboard', function (Request $request) {
-        $role = $request->user()->role;
+        $user = auth('sanctum')->user();
+        if (! $user) {
+            abort(401, 'Unauthenticated');
+        }
+        $role = $user->role;
 
         if ($role === 'ADMINISTRATOR') {
             return Inertia::render('admin/dashboard');
@@ -28,6 +32,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
             abort(403, 'Unauthorized');
         }
     })->name('dashboard');
+
+    if (config('app.debug')) {
+        Route::get('__auth_debug_protected', function (Request $request) {
+            return response()->json([
+                'path' => $request->path(),
+                'auth_sanctum_user_id' => auth('sanctum')->user()?->id,
+                'auth_web_user_id' => auth('web')->user()?->id,
+            ]);
+        });
+    }
 });
 
 if (config('app.debug')) {
