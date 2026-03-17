@@ -75,7 +75,7 @@ const MapRoute = ({ reservation, padding = 0, driverFocus = false }: MapRoutePro
     }, [vehicleLoc]);
 
     const setBounds = (map: L.Map, bounds: L.LatLngBounds) => {
-        map.fitBounds(bounds, {
+        map.flyToBounds(bounds, {
             paddingTopLeft: [0, 0],
             paddingBottomRight: [0, 0]
         });
@@ -83,7 +83,7 @@ const MapRoute = ({ reservation, padding = 0, driverFocus = false }: MapRoutePro
 
     const setCenter = (map: L.Map) => {
         if (vehicleLoc) {
-            map.setView(vehicleLoc, 18);
+            map.flyTo(vehicleLoc, 18);
         }
     }
 
