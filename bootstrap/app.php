@@ -28,6 +28,12 @@ return Application::configure(basePath: dirname(__DIR__))
         );
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state', 'auth_token']);
 
+        // Ensure auth_token is attached before auth middleware runs.
+        $middleware->prependToPriorityList(
+            \Illuminate\Auth\Middleware\Authenticate::class,
+            AttachTokenFromCookie::class
+        );
+
         $middleware->web(append: [
             AttachTokenFromCookie::class,
             HandleAppearance::class,
