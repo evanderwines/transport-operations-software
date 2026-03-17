@@ -417,6 +417,7 @@ class ReservationController extends Controller
         if ($isEdit) {
             $reservation = Reservation::where('reservation_id', $reservationId)->firstOrFail();
             $reservation->update([
+                'status'               => "PENDING",
                 'pickup_address'       => session('pickup_address'),
                 'pickup_latlng'        => session('pickup_latlng'),
                 'dropoff_address'      => session('dropoff_address'),
