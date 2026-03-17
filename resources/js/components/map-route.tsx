@@ -83,7 +83,7 @@ const MapRoute = ({ reservation, padding = 0, driverFocus = false }: MapRoutePro
 
     const setCenter = (map: L.Map) => {
         if (vehicleLoc) {
-            map.flyTo(vehicleLoc, 18);
+            map.setView(vehicleLoc, 18);
         }
     }
 

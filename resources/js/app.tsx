@@ -23,14 +23,6 @@ L.Icon.Default.mergeOptions({
     shadowUrl: markerShadow,
 });
 
-const token = localStorage.getItem('auth_token');
-if (token) {
-    axios.defaults.headers.common.Authorization = `Bearer ${token}`;
-    if (!document.cookie.split('; ').some((c) => c.startsWith('auth_token='))) {
-        const secure = window.location.protocol === 'https:' ? '; Secure' : '';
-        document.cookie = `auth_token=${token}; Path=/; Max-Age=7200; SameSite=Lax${secure}`;
-    }
-}
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 window.axios = axios;
 
