@@ -118,7 +118,7 @@ const FleetManagement = () => {
                                         <div key={index} className="flex flex-col items-center gap-2">
                                             <div className="h-80 w-6 rounded-full bg-gray-100">
                                                 <div
-                                                    className="w-full rounded-full bg-gradient-to-t from-black to-gray-800"
+                                                    className="w-full rounded-full bg-gradient-to-t from-black to-gray-600"
                                                     style={{ height: `${value}%` }}
                                                 />
                                             </div>

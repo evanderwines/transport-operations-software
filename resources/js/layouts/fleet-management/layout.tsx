@@ -30,7 +30,7 @@ export default function FleetmanagementLayout({ children, vehicles, selectedVehi
         <div className="px-4 py-6">
             <div className="flex flex-col lg:flex-row lg:space-x-4">
                 <aside className="w-full max-w-xl lg:w-65">
-                    <nav className="flex flex-col space-y-3 space-x-0">
+                    <nav className="flex flex-col space-y-4 space-x-0">
                         <Link href={index()}>
                             <Button variant="secondary" className='w-full justify-start'>
                                 <FileSearch />

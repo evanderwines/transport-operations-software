@@ -87,7 +87,6 @@ export default function ReseravtionList({ reservations }: { reservations: Pagina
 				<h2 className="text-xl font-bold">Reservations</h2>
 				<form onSubmit={applyFilters} className="flex flex-wrap items-end gap-2.5">
 					<div className="w-56">
-						<label className="text-xs uppercase text-gray-500">Search</label>
 						<Input
 							type="text"
 							placeholder="Search reservation, customer, address"
