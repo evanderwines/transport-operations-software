@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\ActiveDispatchController::index
  * @see app/Http/Controllers/ActiveDispatchController.php:11
@@ -42,44 +42,9 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     method: 'head',
 })
 
-    /**
-* @see \App\Http\Controllers\ActiveDispatchController::index
- * @see app/Http/Controllers/ActiveDispatchController.php:11
- * @route '/active-dispatches'
- */
-    const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: index.url(options),
-        method: 'get',
-    })
-
-            /**
-* @see \App\Http\Controllers\ActiveDispatchController::index
- * @see app/Http/Controllers/ActiveDispatchController.php:11
- * @route '/active-dispatches'
- */
-        indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: index.url(options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\ActiveDispatchController::index
- * @see app/Http/Controllers/ActiveDispatchController.php:11
- * @route '/active-dispatches'
- */
-        indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: index.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    index.form = indexForm
 /**
 * @see \App\Http\Controllers\ActiveDispatchController::show
- * @see app/Http/Controllers/ActiveDispatchController.php:28
+ * @see app/Http/Controllers/ActiveDispatchController.php:57
  * @route '/active-dispatches/{selectedDispatch}'
  */
 export const show = (args: { selectedDispatch: string | number } | [selectedDispatch: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +59,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\ActiveDispatchController::show
- * @see app/Http/Controllers/ActiveDispatchController.php:28
+ * @see app/Http/Controllers/ActiveDispatchController.php:57
  * @route '/active-dispatches/{selectedDispatch}'
  */
 show.url = (args: { selectedDispatch: string | number } | [selectedDispatch: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -122,7 +87,7 @@ show.url = (args: { selectedDispatch: string | number } | [selectedDispatch: str
 
 /**
 * @see \App\Http\Controllers\ActiveDispatchController::show
- * @see app/Http/Controllers/ActiveDispatchController.php:28
+ * @see app/Http/Controllers/ActiveDispatchController.php:57
  * @route '/active-dispatches/{selectedDispatch}'
  */
 show.get = (args: { selectedDispatch: string | number } | [selectedDispatch: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -131,49 +96,13 @@ show.get = (args: { selectedDispatch: string | number } | [selectedDispatch: str
 })
 /**
 * @see \App\Http\Controllers\ActiveDispatchController::show
- * @see app/Http/Controllers/ActiveDispatchController.php:28
+ * @see app/Http/Controllers/ActiveDispatchController.php:57
  * @route '/active-dispatches/{selectedDispatch}'
  */
 show.head = (args: { selectedDispatch: string | number } | [selectedDispatch: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
-
-    /**
-* @see \App\Http\Controllers\ActiveDispatchController::show
- * @see app/Http/Controllers/ActiveDispatchController.php:28
- * @route '/active-dispatches/{selectedDispatch}'
- */
-    const showForm = (args: { selectedDispatch: string | number } | [selectedDispatch: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: show.url(args, options),
-        method: 'get',
-    })
-
-            /**
-* @see \App\Http\Controllers\ActiveDispatchController::show
- * @see app/Http/Controllers/ActiveDispatchController.php:28
- * @route '/active-dispatches/{selectedDispatch}'
- */
-        showForm.get = (args: { selectedDispatch: string | number } | [selectedDispatch: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: show.url(args, options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\ActiveDispatchController::show
- * @see app/Http/Controllers/ActiveDispatchController.php:28
- * @route '/active-dispatches/{selectedDispatch}'
- */
-        showForm.head = (args: { selectedDispatch: string | number } | [selectedDispatch: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: show.url(args, {
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    show.form = showForm
 const activeDispatches = {
     index: Object.assign(index, index),
 show: Object.assign(show, show),

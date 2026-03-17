@@ -11,6 +11,7 @@ import '../bootstrap';
 import CreateUserModal from "./create-user-modal";
 import UserViewModal from "./user-view-modal";
 import { Input } from "./ui/input";
+import { Pagination } from "./pagination";
 
 const columns = [
     "ID",
@@ -115,18 +116,16 @@ export default function UserList() {
             // viewLink={(id) => retrieveUser.url({ user_id: id })}
             />
 
-            {/* <Pagination data={props.users} /> */}
+            <Pagination data={props.users} />
 
             {viewModalId && <UserViewModal viewModalId={viewModalId} setViewModalId={setViewModalId} />}
 
 
             {open && <CreateUserModal setOpen={setOpen} />}
-            {/* <DeleteReservation
-                reservation_id={selectedUserId}
-                isOpen={isOpenDeleteModal}
-                setIsOpen={setIsOpenDeleteModal}
-                updateTable={updateTable}
-            /> */}
+
+            
+
+
         </div>
     );
 }

@@ -5,6 +5,7 @@ import ReservationController from './ReservationController'
 import ActiveDispatchController from './ActiveDispatchController'
 import FleetController from './FleetController'
 import Driver from './Driver'
+import SystemLogController from './SystemLogController'
 import MyReservationController from './MyReservationController'
 import MyActiveReservationsController from './MyActiveReservationsController'
 const Controllers = {
@@ -15,6 +16,7 @@ ReservationController: Object.assign(ReservationController, ReservationControlle
 ActiveDispatchController: Object.assign(ActiveDispatchController, ActiveDispatchController),
 FleetController: Object.assign(FleetController, FleetController),
 Driver: Object.assign(Driver, Driver),
+SystemLogController: Object.assign(SystemLogController, SystemLogController),
 MyReservationController: Object.assign(MyReservationController, MyReservationController),
 MyActiveReservationsController: Object.assign(MyActiveReservationsController, MyActiveReservationsController),
 }

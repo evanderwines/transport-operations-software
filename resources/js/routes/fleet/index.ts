@@ -1,7 +1,7 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\FleetController::index
- * @see app/Http/Controllers/FleetController.php:13
+ * @see app/Http/Controllers/FleetController.php:16
  * @route '/fleet/overview'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\FleetController::index
- * @see app/Http/Controllers/FleetController.php:13
+ * @see app/Http/Controllers/FleetController.php:16
  * @route '/fleet/overview'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\FleetController::index
- * @see app/Http/Controllers/FleetController.php:13
+ * @see app/Http/Controllers/FleetController.php:16
  * @route '/fleet/overview'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\FleetController::index
- * @see app/Http/Controllers/FleetController.php:13
+ * @see app/Http/Controllers/FleetController.php:16
  * @route '/fleet/overview'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -42,44 +42,9 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     method: 'head',
 })
 
-    /**
-* @see \App\Http\Controllers\FleetController::index
- * @see app/Http/Controllers/FleetController.php:13
- * @route '/fleet/overview'
- */
-    const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: index.url(options),
-        method: 'get',
-    })
-
-            /**
-* @see \App\Http\Controllers\FleetController::index
- * @see app/Http/Controllers/FleetController.php:13
- * @route '/fleet/overview'
- */
-        indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: index.url(options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\FleetController::index
- * @see app/Http/Controllers/FleetController.php:13
- * @route '/fleet/overview'
- */
-        indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: index.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    index.form = indexForm
 /**
 * @see \App\Http\Controllers\FleetController::show
- * @see app/Http/Controllers/FleetController.php:20
+ * @see app/Http/Controllers/FleetController.php:33
  * @route '/fleet/{vehicle_id}'
  */
 export const show = (args: { vehicle_id: string | number } | [vehicle_id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +59,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\FleetController::show
- * @see app/Http/Controllers/FleetController.php:20
+ * @see app/Http/Controllers/FleetController.php:33
  * @route '/fleet/{vehicle_id}'
  */
 show.url = (args: { vehicle_id: string | number } | [vehicle_id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -122,7 +87,7 @@ show.url = (args: { vehicle_id: string | number } | [vehicle_id: string | number
 
 /**
 * @see \App\Http\Controllers\FleetController::show
- * @see app/Http/Controllers/FleetController.php:20
+ * @see app/Http/Controllers/FleetController.php:33
  * @route '/fleet/{vehicle_id}'
  */
 show.get = (args: { vehicle_id: string | number } | [vehicle_id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -131,7 +96,7 @@ show.get = (args: { vehicle_id: string | number } | [vehicle_id: string | number
 })
 /**
 * @see \App\Http\Controllers\FleetController::show
- * @see app/Http/Controllers/FleetController.php:20
+ * @see app/Http/Controllers/FleetController.php:33
  * @route '/fleet/{vehicle_id}'
  */
 show.head = (args: { vehicle_id: string | number } | [vehicle_id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -139,44 +104,43 @@ show.head = (args: { vehicle_id: string | number } | [vehicle_id: string | numbe
     method: 'head',
 })
 
-    /**
-* @see \App\Http\Controllers\FleetController::show
- * @see app/Http/Controllers/FleetController.php:20
- * @route '/fleet/{vehicle_id}'
+/**
+* @see \App\Http\Controllers\FleetController::store
+ * @see app/Http/Controllers/FleetController.php:58
+ * @route '/fleet'
  */
-    const showForm = (args: { vehicle_id: string | number } | [vehicle_id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: show.url(args, options),
-        method: 'get',
-    })
+export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: store.url(options),
+    method: 'post',
+})
 
-            /**
-* @see \App\Http\Controllers\FleetController::show
- * @see app/Http/Controllers/FleetController.php:20
- * @route '/fleet/{vehicle_id}'
+store.definition = {
+    methods: ["post"],
+    url: '/fleet',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\FleetController::store
+ * @see app/Http/Controllers/FleetController.php:58
+ * @route '/fleet'
  */
-        showForm.get = (args: { vehicle_id: string | number } | [vehicle_id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: show.url(args, options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\FleetController::show
- * @see app/Http/Controllers/FleetController.php:20
- * @route '/fleet/{vehicle_id}'
+store.url = (options?: RouteQueryOptions) => {
+    return store.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\FleetController::store
+ * @see app/Http/Controllers/FleetController.php:58
+ * @route '/fleet'
  */
-        showForm.head = (args: { vehicle_id: string | number } | [vehicle_id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: show.url(args, {
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    show.form = showForm
+store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: store.url(options),
+    method: 'post',
+})
 const fleet = {
     index: Object.assign(index, index),
 show: Object.assign(show, show),
+store: Object.assign(store, store),
 }
 
 export default fleet

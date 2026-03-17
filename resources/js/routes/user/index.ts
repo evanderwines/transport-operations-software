@@ -1,7 +1,7 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\UserController::customer
- * @see app/Http/Controllers/UserController.php:16
+ * @see app/Http/Controllers/UserController.php:17
  * @route '/users/customer'
  */
 export const customer = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ customer.definition = {
 
 /**
 * @see \App\Http\Controllers\UserController::customer
- * @see app/Http/Controllers/UserController.php:16
+ * @see app/Http/Controllers/UserController.php:17
  * @route '/users/customer'
  */
 customer.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ customer.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\UserController::customer
- * @see app/Http/Controllers/UserController.php:16
+ * @see app/Http/Controllers/UserController.php:17
  * @route '/users/customer'
  */
 customer.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ customer.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\UserController::customer
- * @see app/Http/Controllers/UserController.php:16
+ * @see app/Http/Controllers/UserController.php:17
  * @route '/users/customer'
  */
 customer.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -42,44 +42,9 @@ customer.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     method: 'head',
 })
 
-    /**
-* @see \App\Http\Controllers\UserController::customer
- * @see app/Http/Controllers/UserController.php:16
- * @route '/users/customer'
- */
-    const customerForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: customer.url(options),
-        method: 'get',
-    })
-
-            /**
-* @see \App\Http\Controllers\UserController::customer
- * @see app/Http/Controllers/UserController.php:16
- * @route '/users/customer'
- */
-        customerForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: customer.url(options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\UserController::customer
- * @see app/Http/Controllers/UserController.php:16
- * @route '/users/customer'
- */
-        customerForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: customer.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    customer.form = customerForm
 /**
 * @see \App\Http\Controllers\UserController::driver
- * @see app/Http/Controllers/UserController.php:25
+ * @see app/Http/Controllers/UserController.php:39
  * @route '/users/driver'
  */
 export const driver = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +59,7 @@ driver.definition = {
 
 /**
 * @see \App\Http\Controllers\UserController::driver
- * @see app/Http/Controllers/UserController.php:25
+ * @see app/Http/Controllers/UserController.php:39
  * @route '/users/driver'
  */
 driver.url = (options?: RouteQueryOptions) => {
@@ -103,7 +68,7 @@ driver.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\UserController::driver
- * @see app/Http/Controllers/UserController.php:25
+ * @see app/Http/Controllers/UserController.php:39
  * @route '/users/driver'
  */
 driver.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +77,7 @@ driver.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\UserController::driver
- * @see app/Http/Controllers/UserController.php:25
+ * @see app/Http/Controllers/UserController.php:39
  * @route '/users/driver'
  */
 driver.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -120,44 +85,9 @@ driver.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     method: 'head',
 })
 
-    /**
-* @see \App\Http\Controllers\UserController::driver
- * @see app/Http/Controllers/UserController.php:25
- * @route '/users/driver'
- */
-    const driverForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: driver.url(options),
-        method: 'get',
-    })
-
-            /**
-* @see \App\Http\Controllers\UserController::driver
- * @see app/Http/Controllers/UserController.php:25
- * @route '/users/driver'
- */
-        driverForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: driver.url(options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\UserController::driver
- * @see app/Http/Controllers/UserController.php:25
- * @route '/users/driver'
- */
-        driverForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: driver.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    driver.form = driverForm
 /**
 * @see \App\Http\Controllers\UserController::admin
- * @see app/Http/Controllers/UserController.php:34
+ * @see app/Http/Controllers/UserController.php:61
  * @route '/users/admin'
  */
 export const admin = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -172,7 +102,7 @@ admin.definition = {
 
 /**
 * @see \App\Http\Controllers\UserController::admin
- * @see app/Http/Controllers/UserController.php:34
+ * @see app/Http/Controllers/UserController.php:61
  * @route '/users/admin'
  */
 admin.url = (options?: RouteQueryOptions) => {
@@ -181,7 +111,7 @@ admin.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\UserController::admin
- * @see app/Http/Controllers/UserController.php:34
+ * @see app/Http/Controllers/UserController.php:61
  * @route '/users/admin'
  */
 admin.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -190,7 +120,7 @@ admin.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\UserController::admin
- * @see app/Http/Controllers/UserController.php:34
+ * @see app/Http/Controllers/UserController.php:61
  * @route '/users/admin'
  */
 admin.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -198,44 +128,9 @@ admin.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     method: 'head',
 })
 
-    /**
-* @see \App\Http\Controllers\UserController::admin
- * @see app/Http/Controllers/UserController.php:34
- * @route '/users/admin'
- */
-    const adminForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: admin.url(options),
-        method: 'get',
-    })
-
-            /**
-* @see \App\Http\Controllers\UserController::admin
- * @see app/Http/Controllers/UserController.php:34
- * @route '/users/admin'
- */
-        adminForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: admin.url(options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\UserController::admin
- * @see app/Http/Controllers/UserController.php:34
- * @route '/users/admin'
- */
-        adminForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: admin.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    admin.form = adminForm
 /**
 * @see \App\Http\Controllers\UserController::show
- * @see app/Http/Controllers/UserController.php:43
+ * @see app/Http/Controllers/UserController.php:83
  * @route '/users/{user}'
  */
 export const show = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -250,7 +145,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\UserController::show
- * @see app/Http/Controllers/UserController.php:43
+ * @see app/Http/Controllers/UserController.php:83
  * @route '/users/{user}'
  */
 show.url = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
@@ -283,7 +178,7 @@ show.url = (args: { user: string | number | { id: string | number } } | [user: s
 
 /**
 * @see \App\Http\Controllers\UserController::show
- * @see app/Http/Controllers/UserController.php:43
+ * @see app/Http/Controllers/UserController.php:83
  * @route '/users/{user}'
  */
 show.get = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -292,49 +187,13 @@ show.get = (args: { user: string | number | { id: string | number } } | [user: s
 })
 /**
 * @see \App\Http\Controllers\UserController::show
- * @see app/Http/Controllers/UserController.php:43
+ * @see app/Http/Controllers/UserController.php:83
  * @route '/users/{user}'
  */
 show.head = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
-
-    /**
-* @see \App\Http\Controllers\UserController::show
- * @see app/Http/Controllers/UserController.php:43
- * @route '/users/{user}'
- */
-    const showForm = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: show.url(args, options),
-        method: 'get',
-    })
-
-            /**
-* @see \App\Http\Controllers\UserController::show
- * @see app/Http/Controllers/UserController.php:43
- * @route '/users/{user}'
- */
-        showForm.get = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: show.url(args, options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\UserController::show
- * @see app/Http/Controllers/UserController.php:43
- * @route '/users/{user}'
- */
-        showForm.head = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: show.url(args, {
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    show.form = showForm
 const user = {
     customer: Object.assign(customer, customer),
 driver: Object.assign(driver, driver),

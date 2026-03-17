@@ -144,4 +144,15 @@ class UserController extends Controller
             'modal_message' => "User #" . $user->id . " was updated successfully.",
         ]);
     }
+
+    public function destroy(User $user) {
+        $user->delete();
+
+        return back()->with([
+            'modal_status' => "success",
+            'modal_action' => "delete",
+            'modal_title' => "User deleted!",
+            'modal_message' => "User #" . $user->id . " was deleted successfully.",
+        ]);
+    }   
 }
