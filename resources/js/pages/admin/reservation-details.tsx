@@ -30,7 +30,7 @@ export default function ReservationDetails() {
         <SidebarProvider >
             <AppLayout breadcrumbs={breadcrumbs}>
                 <ReservationDetailsLayout>
-                    <div className='flex-3 relative overflow-hidden' style={{ height: "calc(100vh - 80px)", width: "100%" }}>
+                    <div className='flex-3 relative overflow- bg-gray-200' style={{ height: "calc(100vh - 80px)", width: "100%" }}>
                         <FloatingReservationDetails reservation={props.reservation} />
                         <MapRoute reservation={props.reservation} />
                     </div>

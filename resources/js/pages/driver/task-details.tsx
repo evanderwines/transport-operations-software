@@ -126,7 +126,7 @@ const TaskDetails = () => {
             <AppLayout breadcrumbs={breadcrumbs}>
                 <div className=''>
 
-                    <div className='relative' style={{ width: '100vw', height: '70vh' }}>
+                    <div className='relative bg-gray-200' style={{ width: '100vw', height: '70vh' }}>
 
                         <Button className='absolute bottom-13 right-3 z-10' size="icon" variant="outline" onClick={() => setDriverFocus(!driverFocus)}>
                             {
