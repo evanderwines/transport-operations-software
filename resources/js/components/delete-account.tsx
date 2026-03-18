@@ -31,7 +31,7 @@ export const DeleteAccount = ({ user_id, isOpen, updateTable, setIsOpen }: Delet
                         </Button>
                     </DialogClose>
 
-                    <Link as="div" href={destroy(user_id)}>
+                    <Link as="div" href={destroy(user_id)} onSuccess={() => setIsOpen(false)}>
                         <Button variant="destructive">
                             Delete User
                         </Button>
