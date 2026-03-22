@@ -8,7 +8,15 @@ import { LatLng } from 'leaflet';
 
 
 
-const ActiveDisptach = ({ reservation, selectedReservation }: { reservation: Reservation, selectedReservation: string }) => {
+const ActiveDisptach = ({
+	reservation,
+	selectedReservation,
+	href,
+}: {
+	reservation: Reservation,
+	selectedReservation: string,
+	href?: string,
+}) => {
 	const { props } = usePage<{ filters?: { q?: string; status?: string } }>();
 
 	const startDate = new Date(reservation.dispatch.schedule);
@@ -23,7 +31,7 @@ const ActiveDisptach = ({ reservation, selectedReservation }: { reservation: Res
 		<Link
 			as="div"
 			className={'bg-gray-100 rounded-sm mb-2 py-3 cursor-pointer ' + `${selectedReservation === reservation.reservation_id ? 'border-s-3 border-blue-400 bg-sky-50' : ''}`}
-			href={show(reservation.reservation_id, { query: { q: props.filters?.q, status: props.filters?.status } })}
+			href={href ?? show(reservation.reservation_id, { query: { q: props.filters?.q, status: props.filters?.status } })}
 		>
 			<div className="px-3">
 				<div className='flex justify-between items-center mb-1'>

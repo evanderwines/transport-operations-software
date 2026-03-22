@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { Vehicle, type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { Truck, MapPin, MapPinned, ClipboardPen, NotepadText, FileSearch } from 'lucide-react';
-import { type PropsWithChildren } from 'react';
+import { type PropsWithChildren, useState } from 'react';
 
 import AvatarImageSource from '../../../../public/assets/images/avatar.png';
 import { Avatar, AvatarImage } from '@radix-ui/react-avatar';
@@ -25,6 +25,26 @@ export default function FleetmanagementLayout({ children, vehicles, selectedVehi
         return null;
     }
     const currentPath = window.location.pathname;
+    const [searchInput, setSearchInput] = useState('');
+
+    const filteredVehicles = vehicles.filter((vehicle) => {
+        const query = searchInput.trim().toLowerCase();
+
+        if (!query) {
+            return true;
+        }
+
+        return [
+            vehicle.vehicle_id,
+            vehicle.plate_number,
+            vehicle.model,
+            vehicle.status,
+            vehicle.driver?.name ?? '',
+        ]
+            .join(' ')
+            .toLowerCase()
+            .includes(query);
+    });
 
     return (
         <div className="px-4 py-6">
@@ -38,8 +58,12 @@ export default function FleetmanagementLayout({ children, vehicles, selectedVehi
                             </Button>
                         </Link>
 
-                        <SearchBar />
-                        {vehicles.map((vehicle, index) => {
+                        <SearchBar
+                            value={searchInput}
+                            onChange={setSearchInput}
+                            placeholder="Search driver, plate, model"
+                        />
+                        {filteredVehicles.map((vehicle, index) => {
                             return (
                                 <Link as="div" href={show(vehicle.vehicle_id)} key={index}
                                     className={cn('flex items-center gap-2 mb-1 mt-0 p-1.5 rounded-md cursor-pointer hover:bg-muted', {
@@ -59,6 +83,11 @@ export default function FleetmanagementLayout({ children, vehicles, selectedVehi
                                 </Link>
                             )
                         })}
+                        {filteredVehicles.length === 0 && (
+                            <div className="rounded-md border border-dashed px-3 py-4 text-sm text-gray-500">
+                                No vehicles match your search.
+                            </div>
+                        )}
                     </nav>
                 </aside>
 

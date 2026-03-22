@@ -1,15 +1,31 @@
-import React from 'react'
-import { Input } from './ui/input'
-import { Button } from './ui/button'
-import { Search } from 'lucide-react'
+import { Search } from 'lucide-react';
+import { Input } from './ui/input';
 
-const SearchBar = () => {
-  return (
-    <div className='w-full flex items-center justify-between border rounded-md px-3 gap-2'>
-        <Input type="text" placeholder="Search here" className="w-10 md:w-32 lg:w-48 border-0 shadow-none focus-visible:ring-[0px] ps-0" />
-        <span><Search size={20} color='gray' /></span>
-    </div>
-  )
+interface SearchBarProps {
+  value?: string;
+  onChange?: (value: string) => void;
+  placeholder?: string;
+  className?: string;
 }
 
-export default SearchBar
+const SearchBar = ({
+  value = '',
+  onChange,
+  placeholder = 'Search here',
+  className = '',
+}: SearchBarProps) => {
+  return (
+    <div className={`flex w-full items-center gap-2 rounded-md border px-3 ${className}`.trim()}>
+      <Search size={18} className="shrink-0 text-gray-400" />
+      <Input
+        type="text"
+        value={value}
+        onChange={(event) => onChange?.(event.target.value)}
+        placeholder={placeholder}
+        className="border-0 px-0 shadow-none focus-visible:ring-0"
+      />
+    </div>
+  );
+};
+
+export default SearchBar;

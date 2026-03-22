@@ -26,8 +26,8 @@ class DashboardController extends Controller
 
         return match ($user->role) {
             'ADMINISTRATOR' => $this->adminDashboard(),
-            'DRIVER' => Inertia::render('driver/dashboard'),
-            'CUSTOMER' => Inertia::render('customer/dashboard'),
+            'DRIVER' => $this->driverDashboard($user),
+            'CUSTOMER' => $this->customerDashboard($user),
             default => abort(403, 'Unauthorized'),
         };
     }
@@ -148,6 +148,114 @@ class DashboardController extends Controller
             ],
             'upcomingDispatches' => $upcomingDispatches,
             'recentLogs' => $recentLogs,
+        ]);
+    }
+
+    private function driverDashboard(User $user): Response
+    {
+        $today = Carbon::today();
+        $assignedVehicle = Vehicle::with('driver')->where('driver_id', $user->role_id)->first();
+
+        $reservationsQuery = Reservation::query()
+            ->with(['customer', 'dispatch'])
+            ->when(
+                $assignedVehicle,
+                fn ($query) => $query->whereHas('dispatch', fn ($dispatchQuery) => $dispatchQuery->where('vehicle_id', $assignedVehicle->vehicle_id)),
+                fn ($query) => $query->whereRaw('1 = 0')
+            );
+
+        $statusCounts = (clone $reservationsQuery)
+            ->selectRaw('status, count(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        $upcomingTasks = (clone $reservationsQuery)
+            ->whereHas('dispatch', fn ($query) => $query->where('schedule', '>=', now()->toDateTimeString()))
+            ->orderBy(
+                Dispatch::select('schedule')
+                    ->whereColumn('dispatches.reservation_id', 'reservations.reservation_id')
+                    ->limit(1)
+            )
+            ->limit(5)
+            ->get()
+            ->map(function (Reservation $reservation) {
+                return [
+                    'reservation_id' => $reservation->reservation_id,
+                    'customer_name' => $reservation->customer?->name,
+                    'schedule' => $reservation->dispatch?->schedule,
+                    'status' => $reservation->status,
+                    'pickup_address' => $reservation->pickup_address,
+                    'dropoff_address' => $reservation->dropoff_address,
+                ];
+            })
+            ->values();
+
+        return Inertia::render('driver/dashboard', [
+            'metrics' => [
+                'assigned_vehicle' => $assignedVehicle ? [
+                    'vehicle_id' => $assignedVehicle->vehicle_id,
+                    'plate_number' => $assignedVehicle->plate_number,
+                    'model' => $assignedVehicle->model,
+                    'status' => $assignedVehicle->status,
+                ] : null,
+                'total_tasks' => (clone $reservationsQuery)->count(),
+                'active_tasks' => (clone $reservationsQuery)
+                    ->whereIn('status', ['EN ROUTE', 'GOING TO PICKUP', 'GOING TO DROPOFF', 'WAITING'])
+                    ->count(),
+                'completed_tasks' => (clone $reservationsQuery)->where('status', 'COMPLETE')->count(),
+                'today_tasks' => (clone $reservationsQuery)
+                    ->whereHas('dispatch', fn ($query) => $query->whereDate('schedule', $today))
+                    ->count(),
+            ],
+            'breakdowns' => [
+                'task_statuses' => $this->formatBreakdown($statusCounts),
+            ],
+            'upcomingTasks' => $upcomingTasks,
+        ]);
+    }
+
+    private function customerDashboard(User $user): Response
+    {
+        $today = Carbon::today();
+
+        $reservationsQuery = Reservation::query()
+            ->with(['dispatch.vehicle.driver'])
+            ->where('customer_id', $user->id);
+
+        $serviceCounts = (clone $reservationsQuery)
+            ->selectRaw('service_type, count(*) as total')
+            ->groupBy('service_type')
+            ->pluck('total', 'service_type');
+
+        $recentReservations = (clone $reservationsQuery)
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get()
+            ->map(function (Reservation $reservation) {
+                return [
+                    'reservation_id' => $reservation->reservation_id,
+                    'status' => $reservation->status,
+                    'service_type' => $reservation->service_type,
+                    'schedule' => $reservation->dispatch?->schedule,
+                    'driver_name' => $reservation->dispatch?->vehicle?->driver?->name,
+                    'vehicle_model' => $reservation->dispatch?->vehicle?->model,
+                ];
+            })
+            ->values();
+
+        return Inertia::render('customer/dashboard', [
+            'metrics' => [
+                'total_reservations' => (clone $reservationsQuery)->count(),
+                'active_reservations' => (clone $reservationsQuery)
+                    ->whereIn('status', ['EN ROUTE', 'GOING TO PICKUP', 'GOING TO DROPOFF', 'WAITING'])
+                    ->count(),
+                'completed_reservations' => (clone $reservationsQuery)->where('status', 'COMPLETE')->count(),
+                'new_this_month' => (clone $reservationsQuery)->where('created_at', '>=', $today->copy()->startOfMonth())->count(),
+            ],
+            'breakdowns' => [
+                'service_types' => $this->formatBreakdown($serviceCounts),
+            ],
+            'recentReservations' => $recentReservations,
         ]);
     }
 
