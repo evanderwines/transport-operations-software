@@ -94,9 +94,11 @@ export default function Dashboard() {
                                 <p className="text-xs uppercase tracking-[0.2em] text-white/60">Assigned Vehicle</p>
                                 {props.metrics.assigned_vehicle ? (
                                     <>
-                                        <p className="mt-2 text-xl font-semibold">{props.metrics.assigned_vehicle.model}</p>
-                                        <p className="text-sm text-white/70">
-                                            {props.metrics.assigned_vehicle.plate_number} - {props.metrics.assigned_vehicle.vehicle_id}
+                                        <p className="mt-2 text-xl font-semibold">
+                                            {props.metrics.assigned_vehicle.model}&nbsp;
+                                            <span className='text-xs text-white/60'>
+                                            {props.metrics.assigned_vehicle.plate_number}
+                                            </span>
                                         </p>
                                         <Badge className="mt-3 bg-white text-slate-900">{props.metrics.assigned_vehicle.status}</Badge>
                                     </>
