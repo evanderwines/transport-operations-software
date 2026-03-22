@@ -1,6 +1,6 @@
+import React, { useEffect, useRef, useState } from "react";
 import { Marker, useMap } from "react-leaflet";
 import L from "leaflet";
-import { useEffect, useRef, useState } from "react";
 
 type LatLngLike = { lat: number; lng: number };
 
@@ -8,11 +8,21 @@ function lerp(a: number, b: number, t: number) {
     return a + (b - a) * t;
 }
 
+// Create and memoize the PNG icon once (adjust path, size, anchors as needed)
+const vehicleIcon = L.icon({
+    iconUrl: "/build/assets/truck.png", 
+    iconSize: [40, 40],
+    iconAnchor: [20, 20],
+    popupAnchor: [0, -20],
+    shadowUrl: undefined,
+    shadowSize: undefined,
+});
+
 export default function LiveVehicleLocation({ vehicleLoc }: { vehicleLoc: LatLngLike }) {
     const map = useMap();
     const markerRef = useRef<L.Marker | null>(null);
 
-    // displayedPos is what the marker shows; targetPos is filtered incoming pos
+    // displayedPos is what the marker shows; targetRef is filtered incoming pos
     const [displayedPos, setDisplayedPos] = useState<LatLngLike>(vehicleLoc);
     const targetRef = useRef<LatLngLike>(vehicleLoc);
 
@@ -22,9 +32,19 @@ export default function LiveVehicleLocation({ vehicleLoc }: { vehicleLoc: LatLng
     // Animation state
     const animRef = useRef<{ start: number; duration: number; from: LatLngLike; to: LatLngLike } | null>(null);
 
+    // Ensure marker instance is created with our icon on mount
+    useEffect(() => {
+        if (markerRef.current) {
+            markerRef.current.setIcon(vehicleIcon);
+            markerRef.current.setLatLng([displayedPos.lat, displayedPos.lng]);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     // Update target with exponential smoothing when vehicleLoc changes
     useEffect(() => {
         if (!vehicleLoc) return;
+
         const prev = targetRef.current;
         const smoothed = {
             lat: lerp(prev.lat, vehicleLoc.lat, ALPHA),
@@ -54,24 +74,19 @@ export default function LiveVehicleLocation({ vehicleLoc }: { vehicleLoc: LatLng
         raf = requestAnimationFrame(step);
         return () => cancelAnimationFrame(raf);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [vehicleLoc]); // vehicleLoc is the raw incoming update
+    }, [vehicleLoc]);
 
-    // Ensure marker is created and synced on mount
-    useEffect(() => {
-        if (markerRef.current) markerRef.current.setLatLng([displayedPos.lat, displayedPos.lng]);
-    }, []);
-
-    // Optional: follow map center when a follow flag is set (not shown here)
-    // map.panTo([displayedPos.lat, displayedPos.lng], { animate: true });
 
     return (
         <Marker
             position={[displayedPos.lat, displayedPos.lng]}
+            icon={vehicleIcon}
             ref={(m) => {
-                // react-leaflet gives the leaflet marker instance here
+                // react-leaflet's Marker ref can be cast to Leaflet Marker instance
                 markerRef.current = (m as unknown) as L.Marker | null;
+                // ensure icon is set if the instance becomes available later
+                if (markerRef.current) markerRef.current.setIcon(vehicleIcon);
             }}
-            //icon={L.icon({ iconUrl: "/marker-icon.png", iconAnchor: [12, 41] })}
         />
     );
 }
