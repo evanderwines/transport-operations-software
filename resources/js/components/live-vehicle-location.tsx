@@ -12,7 +12,7 @@ function lerp(a: number, b: number, t: number) {
 // Create and memoize the PNG icon once (adjust path, size, anchors as needed)
 const vehicleIcon = L.icon({
     iconUrl: TruckLogo, 
-    iconSize: [70, 70],
+    iconSize: [80, 80],
     iconAnchor: [20, 20],
     popupAnchor: [0, -20],
     shadowUrl: undefined,

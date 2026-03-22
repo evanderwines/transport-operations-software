@@ -1,6 +1,7 @@
 
 <?php
 
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
@@ -13,25 +14,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    Route::get('dashboard', function (Request $request) {
-        $user = auth('sanctum')->user();
-        if (! $user) {
-            abort(401, 'Unauthenticated');
-        }
-        $role = $user->role;
-
-        if ($role === 'ADMINISTRATOR') {
-            return Inertia::render('admin/dashboard');
-        } elseif ($role === 'DRIVER') {
-            
-            return Inertia::render('driver/dashboard');
-        } elseif ($role == 'CUSTOMER') {
-            return Inertia::render('customer/dashboard');
-        }
-        else {
-            abort(403, 'Unauthorized');
-        }
-    })->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     if (config('app.debug')) {
         Route::get('__auth_debug_protected', function (Request $request) {
