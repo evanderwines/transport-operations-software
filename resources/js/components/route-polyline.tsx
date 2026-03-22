@@ -89,10 +89,6 @@ export default function RoutePolyline({ routePoints, driverPos = null, trimDebou
         if (driverFocus) {
             setCenter(map);
         }
-        else {
-            const bounds = L.latLngBounds(routePoints);
-            setBounds(map, bounds)
-        }
     }, [driverFocus, driverPos, map, setCenter]);
 
     // update the actual Leaflet polyline in place for smooth redraws
