@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Marker, useMap } from "react-leaflet";
 import L from "leaflet";
+import TruckLogo from  '../../../public/assets/images/truck.png';
 
 type LatLngLike = { lat: number; lng: number };
 
@@ -10,7 +11,7 @@ function lerp(a: number, b: number, t: number) {
 
 // Create and memoize the PNG icon once (adjust path, size, anchors as needed)
 const vehicleIcon = L.icon({
-    iconUrl: "/build/assets/truck.png", 
+    iconUrl: TruckLogo, 
     iconSize: [40, 40],
     iconAnchor: [20, 20],
     popupAnchor: [0, -20],
