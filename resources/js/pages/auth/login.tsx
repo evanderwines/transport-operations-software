@@ -104,9 +104,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
 
                             <div className="max-w-2xl space-y-8">
                                 <div className="space-y-5">
-                                    <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1 text-sm font-medium text-slate-200">
-                                        Dedicated operations login
-                                    </span>
+                                    
                                     <div className="space-y-4">
                                         <h2 className="text-5xl font-semibold tracking-tight text-balance text-white">
                                             Keep reservations, dispatches, and fleet movement in sync.
@@ -131,7 +129,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                 </div>
                             </div>
 
-                            <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-6 backdrop-blur">
+                            <div className="max-w-2xl rounded-[1.75rem] border border-white/10 bg-white/5 p-6 backdrop-blur mt-5">
                                 <p className="text-sm font-medium tracking-[0.28em] text-slate-300 uppercase">What you can do after login</p>
                                 <div className="mt-5 space-y-3">
                                     {checklist.map((item) => (
@@ -147,7 +145,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         </div>
                     </section>
 
-                    <section className="flex items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.10),transparent_30%),linear-gradient(180deg,#fffdf7_0%,#f8fafc_42%,#eef2ff_100%)] px-6 py-10 sm:px-8">
+                    <section className="flex items-start justify-center bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.10),transparent_30%),linear-gradient(180deg,#fffdf7_0%,#f8fafc_42%,#eef2ff_100%)] px-6 py-10 sm:px-8">
                         <div className="w-full max-w-md">
                             <Link href={home()} className="mb-8 flex items-center gap-4 lg:hidden">
                                 <ProjectLogo className="w-14 drop-shadow-sm" />

@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Reservation;
 use App\Models\Vehicle;
+use App\Models\User;
 use App\Models\Dispatch;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -24,6 +25,32 @@ use App\Models\SystemLog;
 
 class ReservationController extends Controller
 {
+    private function minimumReservationDate(): string
+    {
+        return Carbon::tomorrow()->toDateString();
+    }
+
+    private function normalizeReservationDate(?string $date): string
+    {
+        if (! $date) {
+            return $this->minimumReservationDate();
+        }
+
+        try {
+            $parsedDate = Carbon::parse($date)->startOfDay();
+        } catch (\Exception $e) {
+            return $this->minimumReservationDate();
+        }
+
+        $minimumDate = Carbon::tomorrow()->startOfDay();
+
+        if ($parsedDate->lt($minimumDate)) {
+            return $minimumDate->toDateString();
+        }
+
+        return $parsedDate->toDateString();
+    }
+
     private function clearCreateSession(): void
     {
         session()->forget([
@@ -166,7 +193,7 @@ class ReservationController extends Controller
         return redirect()->route('reservations.edit.step', [
             'reservation_id' => $reservation_id,
             'step' => 1,
-            'date' => session('date') ?? date('Y-m-d'),
+            'date' => $this->normalizeReservationDate(session('date')),
         ]);
     }
 
@@ -226,7 +253,7 @@ class ReservationController extends Controller
 
         switch ($step) {
             case 1:
-                return $this->renderStep1($request, $request->query('date') ?? date('Y-m-d'));
+                return $this->renderStep1($request, $request->query('date') ?? $this->minimumReservationDate());
             case 2:
                 return $this->renderStep2();
             case 3:
@@ -234,7 +261,7 @@ class ReservationController extends Controller
             case 4:
                 return $this->renderStep4($request);
             case 5:
-                return $this->renderStep5();
+                return $this->renderStep5($request);
             default:
                 return redirect()->route('reservations.step', ['step' => 1]);
         }
@@ -259,7 +286,7 @@ class ReservationController extends Controller
 
         switch ($step) {
             case 1:
-                return $this->renderStep1($request, $request->query('date') ?? (session('date') ?? date('Y-m-d')));
+                return $this->renderStep1($request, $request->query('date') ?? (session('date') ?? $this->minimumReservationDate()));
             case 2:
                 return $this->renderStep2();
             case 3:
@@ -267,7 +294,7 @@ class ReservationController extends Controller
             case 4:
                 return $this->renderStep4($request);
             case 5:
-                return $this->renderStep5();
+                return $this->renderStep5($request);
             default:
                 return redirect()->route('reservations.edit.step', ['reservation_id' => $reservation_id, 'step' => 1]);
         }
@@ -275,14 +302,10 @@ class ReservationController extends Controller
 
     public function renderStep1(Request $request, $date)
     {
-        try {
-            $parsedDate = Carbon::parse($date)->toDateString();
-        } catch (\Exception $e) {
-            $parsedDate = Carbon::today()->toDateString();
-        }
+        $parsedDate = $this->normalizeReservationDate($date);
 
         if (! $request->query('date') && session('date')) {
-            $parsedDate = session('date');
+            $parsedDate = $this->normalizeReservationDate(session('date'));
         }
 
 
@@ -296,7 +319,7 @@ class ReservationController extends Controller
             ->get();
 
         // Get vehicles that are not dispatched and are marked AVAILABLE
-        $availableVehicles = Vehicle::whereNotIn('vehicle_id', $dispatchedVehicles)
+        $availableVehicles = Vehicle::with('driver')->whereNotIn('vehicle_id', $dispatchedVehicles)
             ->where('status', 'AVAILABLE')
             ->get();
 
@@ -304,6 +327,7 @@ class ReservationController extends Controller
 
         return Inertia::render('admin/new-reservation/availability', [
             'date' => $parsedDate,
+            'minimumDate' => $this->minimumReservationDate(),
             'availableVehicles' => $availableVehicles,
             'unavailableVehicles' => $unavailableVehicles,
             'edit_mode' => session()->has('edit_reservation_id'),
@@ -350,9 +374,32 @@ class ReservationController extends Controller
         ]);
     }
 
-    public function renderStep5()
+    public function renderStep5(Request $request)
     {
+        $selectedVehicle = session('vehicle_id')
+            ? Vehicle::with('driver')->where('vehicle_id', session('vehicle_id'))->first()
+            : null;
+
+        $customer = User::query()
+            ->select('id', 'name', 'email')
+            ->find(session('customer_id') ?? $request->user()->id);
+
         return Inertia::render('admin/new-reservation/summary', [
+            'summary' => [
+                'customer_id' => session('customer_id') ?? $request->user()->id,
+                'date' => $this->normalizeReservationDate(session('date')),
+                'time' => session('time'),
+                'vehicle_id' => session('vehicle_id'),
+                'pickup_address' => session('pickup_address'),
+                'pickup_latlng' => session('pickup_latlng'),
+                'dropoff_address' => session('dropoff_address'),
+                'dropoff_latlng' => session('dropoff_latlng'),
+                'service_type' => session('service_type'),
+                'cargo_details' => session('cargo_details'),
+                'special_instructions' => session('special_instructions'),
+            ],
+            'selectedVehicle' => $selectedVehicle,
+            'customer' => $customer,
             'edit_mode' => session()->has('edit_reservation_id'),
             'edit_reservation_id' => session('edit_reservation_id'),
         ]);

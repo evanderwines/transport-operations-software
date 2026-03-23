@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Reservation;
 
-use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -17,8 +16,8 @@ class ProcessStep1Request extends FormRequest
     public function rules(): array
     {
         return [
-            'vehicle_id' => ['required', 'string', 'max:20'],
-            'date' => ['required', 'string', 'max:20'],
+            'vehicle_id' => ['required', 'string', 'max:20', Rule::exists('vehicles', 'vehicle_id')],
+            'date' => ['required', 'date_format:Y-m-d', 'after:today'],
         ];
     }
 }
