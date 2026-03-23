@@ -122,6 +122,7 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'email' => 'string',
             'role' => ['required', 'string', Rule::in(['ADMINISTRATOR', 'DRIVER', 'CUSTOMER'])],
         ]);
 
