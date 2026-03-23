@@ -145,7 +145,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         </div>
                     </section>
 
-                    <section className="flex items-start justify-center bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.10),transparent_30%),linear-gradient(180deg,#fffdf7_0%,#f8fafc_42%,#eef2ff_100%)] px-6 py-10 sm:px-8">
+                    <section className="flex items-start mt-3 justify-center bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.10),transparent_30%),linear-gradient(180deg,#fffdf7_0%,#f8fafc_42%,#eef2ff_100%)] px-6 py-10 sm:px-8">
                         <div className="w-full max-w-md">
                             <Link href={home()} className="mb-8 flex items-center gap-4 lg:hidden">
                                 <ProjectLogo className="w-14 drop-shadow-sm" />
@@ -157,9 +157,6 @@ export default function Login({ status, canResetPassword }: LoginProps) {
 
                             <div className="rounded-[2rem] border border-slate-200/80 bg-white/95 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.12)] backdrop-blur sm:p-10">
                                 <div className="space-y-3">
-                                    <span className="inline-flex rounded-full border border-amber-200 bg-amber-50 px-4 py-1 text-sm font-medium text-amber-800">
-                                        Secure sign in
-                                    </span>
                                     <div className="space-y-2">
                                         <h3 className="text-3xl font-semibold tracking-tight text-slate-950">Welcome back</h3>
                                         <p className="text-sm leading-6 text-slate-600">
