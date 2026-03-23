@@ -1,0 +1,1122 @@
+
+TRANSPORT OPERATIONS SOFTWARE
+PROJECT DOCUMENTATION REPORT
+Generated: 2026-03-22 (Asia/Manila)
+Repository root: d:\Evan\transport-operations-software
+Report file: PROJECT_DOCUMENTATION_REPORT.txt
+
+======================================================================
+1. SCOPE AND METHOD
+======================================================================
+This report was produced from a repository-wide scan of first-party project files.
+It covers backend code, frontend code, routes, seeders, tests, configuration,
+public assets, and deployment files.
+
+For safety and signal quality, this report does not reproduce secret values from
+hidden environment files and does not attempt to document third-party dependency
+source trees under vendor/ or node_modules/ in detail.
+
+Files scanned in the first-party codebase: 321
+
+Top-level first-party file counts:
+
+- Dockerfile: 1
+- README.md: 1
+- app: 42
+- artisan: 1
+- bootstrap: 3
+- components.json: 1
+- composer.json: 1
+- composer.lock: 1
+- config: 13
+- database: 16
+- docker-entrypoint.sh: 1
+- eslint.config.js: 1
+- package-lock.json: 1
+- package.json: 1
+- phpunit.xml: 1
+- public: 12
+- resources: 186
+- routes: 15
+- storage: 9
+- supervisord.conf: 1
+- tests: 11
+- tsconfig.json: 1
+- vite.config.ts: 1
+
+
+Primary application code counts:
+- app/Http/Controllers: 21
+- app/Models: 6
+- resources/js/pages: 28
+- resources/js/components: 78
+- resources/js/layouts: 13
+- resources/js/routes: 19
+- resources/js/actions: 34
+- database/seeders: 15
+- tests: 11
+
+======================================================================
+2. EXECUTIVE SUMMARY
+======================================================================
+This repository is a Laravel 12 + Inertia + React 19 transport operations
+application with three main user roles:
+- ADMINISTRATOR
+- DRIVER
+- CUSTOMER
+
+The core business domains are:
+- user management
+- reservation creation and tracking
+- dispatch assignment and monitoring
+- vehicle and driver fleet management
+- driver task execution
+- customer reservation self-service
+- system log reporting
+- real-time vehicle location updates
+
+The app behaves like a role-aware operations dashboard rather than a purely
+traditional CRUD system. Most user-facing screens are rendered through Inertia,
+with Laravel controllers providing server-driven data and React pages/components
+handling client interactivity.
+
+======================================================================
+3. TECHNOLOGY STACK
+======================================================================
+Backend:
+- PHP 8.2
+- Laravel 12
+- Inertia server adapter
+- Laravel Sanctum for API/token authentication
+- Laravel Reverb for broadcasting
+- Laravel Wayfinder for generated route/action helpers
+
+Frontend:
+- React 19
+- TypeScript
+- Vite 7
+- Tailwind CSS 4
+- shadcn/ui + Radix UI primitives
+- Lucide icons
+- Leaflet + React Leaflet for maps
+- Laravel Echo + Pusher JS client for websocket subscriptions
+
+Supporting libraries and patterns:
+- Axios for HTTP requests
+- Ziggy route typing
+- GraphHopper routing API integration in frontend mapping utilities
+- Modal and multi-step reservation state managed via React context and Laravel session
+
+======================================================================
+4. HIGH-LEVEL ARCHITECTURE
+======================================================================
+Application shape:
+- Laravel handles HTTP routing, authentication, validation, data access, and Inertia responses.
+- React handles page rendering, forms, dashboard visuals, filtering UX, maps, and live updates.
+- Sanctum protects most application routes with auth:sanctum.
+- An httpOnly auth_token cookie is attached as a Bearer token by custom middleware.
+- Echo/Reverb is used for broadcasting reservation and vehicle location events.
+
+Request flow:
+1. Browser request enters Laravel.
+2. AttachTokenFromCookie middleware copies auth_token into Authorization when needed.
+3. auth:sanctum resolves the user.
+4. Controller queries Eloquent models and returns Inertia payloads.
+5. React page renders the role-specific screen.
+6. Optional Echo subscriptions update the UI in real time.
+
+Role split:
+- Administrators get dashboards plus users, reservations, fleet, active dispatches, and logs.
+- Drivers get tasks, task details, live location broadcasting, and a dashboard.
+- Customers get their own reservations, active reservations, and a dashboard.
+
+======================================================================
+5. AUTHENTICATION AND AUTHORIZATION MODEL
+======================================================================
+Auth implementation is customized beyond the default starter kit.
+
+Important behavior:
+- resources/js/pages/auth/login.tsx posts to /api/login instead of the default web login form route.
+- routes/api.php issues a Sanctum personal access token and stores it in an httpOnly auth_token cookie.
+- app/Http/Middleware/AttachTokenFromCookie.php injects that cookie into the Authorization header.
+- bootstrap/app.php prepends AttachTokenFromCookie globally so it runs before auth middleware.
+- app/Http/Middleware/HandleInertiaRequests.php shares auth user data and optional auth_debug props.
+- routes/web.php contains debug endpoints when APP_DEBUG is enabled.
+
+Role-based behavior:
+- Dashboard routing is role-aware in app/Http/Controllers/DashboardController.php.
+- Sidebar navigation is filtered by role in resources/js/components/ui/sidebar.tsx.
+- Reservation index redirects customers to /my-reservations.
+
+Operational note:
+- The project currently mixes starter-kit web auth conventions with API token auth conventions.
+  The visible login UI uses /api/login, while many default auth tests still target login.store.
+
+======================================================================
+6. ROUTING STRUCTURE
+======================================================================
+Primary web entrypoints:
+- routes/web.php
+  - / => welcome page
+  - /dashboard => role-specific dashboard via DashboardController@index
+  - debug auth endpoints under APP_DEBUG
+  - includes modular route files for settings, auth, users, reservations, fleet, logs, tasks, and customer pages
+
+Auth routes:
+- routes/auth.php
+  - register, login, forgot/reset password, email verification, password confirmation, logout
+
+Token API routes:
+- routes/api.php
+  - POST /api/login => token creation + auth_token cookie
+  - POST /api/logout => current access token deletion + cookie forget
+  - GET /api/me => authenticated user payload
+
+Admin module routes:
+- routes/user.php
+  - /users/customer, /users/driver, /users/admin
+  - user show/create/update/destroy
+- routes/reservations.php
+  - reservation list, details, edit, delete
+  - multi-step create/edit process
+- routes/active-dispatches.php
+  - active dispatch list/detail
+- routes/fleet.php
+  - fleet overview, vehicle detail, create vehicle
+- routes/logs.php
+  - system logs list
+
+Driver routes:
+- routes/task.php
+  - /tasks, /tasks/{reservation_id}
+  - /tasks/location => live vehicle location broadcast
+  - /tasks/{reservation_id}/status => reservation status update
+
+Customer routes:
+- routes/my-reservations.php
+  - /my-reservations
+- routes/my-active-reservations.php
+  - /my-active-reservations
+  - /my-active-reservations/{selectedReservation}
+
+Other route files:
+- routes/channels.php => private user broadcast channel example
+- routes/job.php => currently empty
+- routes/console.php => Artisan console routes
+- routes/settings.php => profile/password/appearance settings
+
+======================================================================
+7. DOMAIN MODEL AND DATA STRUCTURE
+======================================================================
+Core models:
+- User
+  - Standard auth entity.
+  - Stores role and role_id.
+  - CUSTOMER users relate to reservations through customer_id.
+- Reservation
+  - Primary business record.
+  - String primary key reservation_id.
+  - Stores status, addresses, lat/lng strings, date/time, service type, cargo, instructions.
+- Dispatch
+  - Links reservation to vehicle and schedule.
+  - schedule and assigned_at drive operational planning.
+- Driver
+  - Separate entity keyed by driver_id.
+  - Vehicle assignment is based on driver_id.
+- Vehicle
+  - Keyed by vehicle_id.
+  - Stores assigned driver, plate, model, capacity, status.
+- SystemLog
+  - Stored in logs table.
+  - Tracks datelog, timelog, action, module, performed_to, description.
+
+Relationship summary as implemented:
+- User hasMany Reservation via customer_id.
+- Reservation belongsTo User as customer.
+- Reservation hasOne Dispatch.
+- Driver hasOne Vehicle.
+- Vehicle belongsTo Driver.
+- Dispatch exposes vehicle via hasOne(Vehicle::class, 'vehicle_id', 'vehicle_id').
+- Vehicle exposes dispatch via belongsTo(Dispatch::class, 'vehicle_id', 'vehicle_id').
+
+Important modeling note:
+- The dispatch/vehicle relationship methods are unconventional for a historical dispatch model.
+  In practice, dispatches point at vehicles via vehicle_id, but the relationship types suggest a tighter
+  one-to-one view than the business domain may need.
+
+Role linkage note:
+- Driver dashboards/tasks infer the driver entity through users.role_id == drivers.driver_id.
+
+Common reservation status values seen in code and seed data:
+- PENDING
+- ASSIGNED
+- GOING TO PICKUP
+- WAITING
+- GOING TO DROPOFF
+- EN ROUTE
+- COMPLETE
+
+======================================================================
+8. BACKEND MODULE DOCUMENTATION
+======================================================================
+8.1 DashboardController
+- Provides role-based dashboards.
+- Admin dashboard aggregates reservation, fleet, user, dispatch, and log metrics.
+- Driver dashboard shows assigned vehicle, task totals, active/completed/today counts, and upcoming tasks.
+- Customer dashboard shows total/active/completed/new-this-month counts, service type mix, and recent reservations.
+
+8.2 UserController
+- Provides filtered admin views for customer, driver, and administrator user lists.
+- Supports create and update with modal feedback.
+- Writes system logs for create and update.
+- Admin delete currently returns modal feedback but does not write a system log entry.
+
+8.3 ReservationController
+- Central workflow controller for admin reservation management.
+- Supports:
+  - list with server-side filters
+  - detail page
+  - delete
+  - multi-step creation
+  - multi-step editing using session state
+- Uses ProcessStep1-4 request validators.
+- Creates a Dispatch record during create flow.
+- Broadcasts ReservationCreated / ReservationDeleted events.
+- Writes system logs for reservation create and delete.
+
+Reservation creation flow:
+1. Step 1 selects vehicle/date.
+2. Step 2 captures pickup location.
+3. Step 3 captures dropoff location.
+4. Step 4 captures service details.
+5. Step 5 writes reservation + dispatch and clears session state.
+
+8.4 ActiveDispatchController
+- Builds the admin live dispatch board.
+- Filters to active reservation statuses.
+- Supports server-side search and selected reservation detail rendering.
+
+8.5 FleetController
+- Fleet overview returns vehicles, available drivers, and recent vehicle logs.
+- Fleet detail returns selected vehicle plus associated reservations.
+- Store action creates a vehicle and optionally assigns a driver.
+- When a driver is assigned on creation, driver status is updated to ASSIGNED.
+
+8.6 Driver/TaskController
+- Lists reservations associated with the driver's assigned vehicle.
+- Shows task details page.
+- Broadcasts VehicleLocationUpdated on /tasks/location.
+- Updates reservation status and writes a RESERVATIONS system log entry.
+
+8.7 MyReservationController
+- Customer reservation list page.
+- Uses paginated reservations by customer_id.
+- Includes a show method that currently renders the admin reservation-details page rather than a customer-specific detail page.
+
+8.8 MyActiveReservationsController
+- Customer live reservation monitoring page.
+- Mirrors the active-dispatch flow but scopes results to the logged-in customer.
+- Supports server-side search and selected reservation rendering.
+
+8.9 SystemLogController
+- Provides server-side filtering, stats, pagination, module list, and action list for the logs page.
+
+8.10 Settings and Auth Controllers
+- ProfileController handles edit/update/delete account.
+- PasswordController handles password update.
+- RegisteredUserController creates CUSTOMER accounts.
+- AuthenticatedSessionController destroys current access tokens on logout.
+
+======================================================================
+9. FRONTEND APPLICATION STRUCTURE
+======================================================================
+Entry and bootstrap files:
+- resources/js/app.tsx
+  - Boots Inertia app.
+  - Loads global CSS and Leaflet CSS.
+  - Fixes default Leaflet marker icons under Vite.
+  - Registers CreateReservationProvider and ModalProvider.
+- resources/js/bootstrap.ts
+  - Initializes Pusher/Echo client.
+  - Connects to hosted Reverb websocket server.
+  - Logs connection state to console.
+
+Layout system:
+- App layout is routed through resources/js/layouts/app-layout.tsx.
+- Sidebar chrome comes from resources/js/layouts/app/app-sidebar-layout.tsx and components/ui/sidebar.tsx.
+- Role-based nav items are defined inside the sidebar component itself.
+- Specialized layouts exist for reservations, users, settings, fleet management, auth, and reservation details.
+
+Generated helper layers:
+- resources/js/routes/* contains typed route helpers.
+- resources/js/actions/* contains generated action helpers for controllers.
+- This suggests tight integration with Laravel Wayfinder/Ziggy-style typed navigation.
+
+======================================================================
+10. FRONTEND ROLE PAGES
+======================================================================
+Administrator pages:
+- dashboard.tsx => metrics, 7-day trend, breakdowns, upcoming dispatches, recent logs
+- users.tsx => users management shell
+- reservations.tsx => reservation management shell
+- reservation-details.tsx => reservation detail view
+- new-reservation/* => multi-step reservation creation/edit pages
+- active-dispatches.tsx => live dispatch monitoring board
+- fleet-management.tsx => vehicle dashboard + create modal
+- fleet-details.tsx => vehicle detail page
+- system-logs.tsx => log metrics + table
+
+Driver pages:
+- dashboard.tsx => assigned vehicle, task metrics, upcoming tasks
+- tasks.tsx => list of assigned reservations
+- task-details.tsx => map, live location sending, status progression controls
+
+Customer pages:
+- dashboard.tsx => reservation metrics, service mix, recent reservations
+- my-reservations.tsx => paginated reservation list
+- active-reservations.tsx => map-based live active reservation monitoring with search
+
+Auth/settings pages:
+- login, register, forgot/reset password, confirm password, verify email
+- profile, password, appearance
+
+======================================================================
+11. KEY REACT COMPONENTS
+======================================================================
+Operational components:
+- reservation-list.tsx
+  - Admin reservations board with server-side filters and live Echo listeners for create/delete events.
+- user-list.tsx
+  - User table with search, column visibility persistence, create modal, view modal, and delete modal.
+- map-route.tsx
+  - Central live map component for dispatch/driver views.
+  - Listens to VehicleLocationUpdated events on the vehicles channel.
+  - Fetches route geometry once the vehicle location is known.
+- route-polyline.tsx
+  - Trims the remaining route as the driver progresses.
+  - Supports follow/focus mode.
+- live-vehicle-location.tsx
+  - Smoothly animates vehicle marker movement.
+- active-dispatch.tsx
+  - Reservation summary tile used by admin and customer active views.
+- floating-reservation-details.tsx
+  - Overlay detail panel on map views.
+- task.tsx, tab-order-details.tsx, tab-driver-information.tsx
+  - Supporting task/dispatch detail UI.
+
+UI infrastructure:
+- Extensive local shadcn/Radix component set under resources/js/components/ui.
+- Modal and create-reservation state contexts under resources/js/components/context.
+
+======================================================================
+12. REAL-TIME, MAPS, AND EXTERNAL SERVICES
+======================================================================
+Broadcast events found in the repo:
+- VehicleLocationUpdated
+- ReservationCreated
+- ReservationDeleted
+
+Real-time channels and usage:
+- reservations channel is used in reservation-list.tsx for create/delete updates.
+- vehicles channel is used in map-route.tsx for live vehicle position updates.
+
+Websocket client:
+- resources/js/bootstrap.ts hardcodes a Reverb/Pusher-compatible key and host.
+- config/reverb.php also contains explicit websocket app credentials/host values.
+
+Mapping flow:
+- Driver page obtains browser geolocation every 5 seconds.
+- Driver posts /tasks/location with vehicle_id, latitude, longitude.
+- Backend broadcasts VehicleLocationUpdated.
+- Customer/admin map listens and updates vehicle marker.
+- RoutePolyline trims already-traversed segments.
+
+External API integration:
+- resources/js/lib/utils.ts calls GraphHopper to compute a route polyline.
+- A GraphHopper API key is currently hardcoded in frontend code.
+
+======================================================================
+13. DATABASE, SEEDING, AND PERSISTED DATA
+======================================================================
+Database source of truth in this repo is currently stronger in seeders than in migrations.
+
+Observed state:
+- database/migrations directory exists but is empty.
+- database/seeders contains the project's visible seed data definitions.
+- DatabaseSeeder calls multiple table-specific seeders.
+
+Seeded tables include:
+- api
+- cache
+- customers
+- dispatches
+- drivers
+- users (including driver users)
+- logs
+- payments
+- pricing
+- reservations
+- sessions
+- vehicles
+
+Important seed observations:
+- LogsSeeder contains a large synthetic activity history used by the logs page.
+- Seeded logs show module spelling inconsistencies such as RESERVATION, RESERVATIONS, and RSESRVATION.
+- DispatchesSeeder includes a status column, but Dispatch model fillable fields do not include status.
+
+======================================================================
+14. TEST COVERAGE
+======================================================================
+The existing automated tests are still largely starter-kit oriented.
+
+Covered areas:
+- authentication
+- registration
+- email verification
+- password reset/confirmation
+- profile update/delete
+- password update
+- dashboard access
+
+Current gap profile:
+- no domain-specific tests for reservations, dispatching, fleet, logs, or mapping workflows
+- no websocket/broadcast integration tests
+- no explicit tests for custom token-cookie auth middleware behavior
+
+======================================================================
+15. DEPLOYMENT AND OPERATIONS
+======================================================================
+Deployment files indicate container-based hosting.
+
+Dockerfile:
+- Uses node:20 base image.
+- Installs PHP CLI and required extensions directly in the image.
+- Installs Composer and npm dependencies.
+- Runs npm build during image build.
+
+Entry point:
+- docker-entrypoint.sh clears caches and runs php artisan migrate --seed --force on startup.
+- This means runtime startup currently assumes DB migration/seed execution is safe in the deployment environment.
+
+Process model:
+- supervisord.conf runs php artisan serve under Supervisor.
+
+Operational implications:
+- The app is optimized for simple platform deployment rather than a split web/php-fpm/nginx topology.
+- Startup seeding can be convenient for demos but risky for production if not controlled.
+
+======================================================================
+16. CONFIGURATION NOTES
+======================================================================
+Relevant configuration files:
+- config/auth.php
+- config/broadcasting.php
+- config/reverb.php
+- config/session.php
+- config/database.php
+- config/logging.php
+- config/inertia.php
+
+Important config behavior observed in code:
+- Cookie encryption excludes auth_token so Sanctum token cookies remain readable.
+- Broadcast driver defaults to env('BROADCAST_CONNECTION', 'null'); real-time depends on env override.
+- Reverb config contains explicit host/app values in config file, not only env references.
+
+======================================================================
+17. PROJECT STRENGTHS
+======================================================================
+- Clear role separation across admin, driver, and customer experiences.
+- Practical operational features: dispatch monitoring, fleet overview, live maps, logs.
+- Good use of Inertia for server-driven React pages.
+- Reusable UI component base already exists.
+- System logs provide a strong foundation for auditability.
+- Dashboards now use real database metrics instead of placeholders.
+
+======================================================================
+18. OBSERVATIONS, RISKS, AND TECHNICAL DEBT
+======================================================================
+1. Authentication approach is mixed.
+   - The repo keeps both starter-kit auth routes and a custom /api/login token-cookie flow.
+   - This is workable, but it increases cognitive load and testing complexity.
+
+2. Hardcoded external credentials/endpoints exist in source.
+   - resources/js/bootstrap.ts hardcodes websocket host/key.
+   - resources/js/lib/utils.ts hardcodes GraphHopper API key.
+   - config/reverb.php contains explicit app key/secret/host values.
+   - These should move to environment configuration.
+
+3. Missing event class reference.
+   - app/Http/Controllers/Driver/LocationController.php references DriverLocationUpdated,
+     but no corresponding event file was found in app/Events.
+
+4. Empty migrations directory.
+   - database/migrations is empty, so schema evolution is not documented in migration source.
+
+5. Some type and model inconsistencies exist.
+   - resources/js/types/index.d.ts defines Vehicle twice.
+   - Dispatch seed data includes status, but Dispatch model fillable fields omit it.
+   - Relationship semantics between Dispatch and Vehicle are unconventional.
+
+6. Admin user deletion is not fully logged.
+   - UserController::destroy deletes users but does not write a system log entry.
+   - ProfileController::destroy does log self-deletion.
+
+7. Potential null-safety issue in driver tasks.
+   - TaskController@index assumes every driver has an assigned vehicle before dereferencing first()->vehicle_id.
+
+8. UI/state cleanup is uneven.
+   - user-menu-content.tsx still clears localStorage auth_token even though auth is primarily cookie-based.
+
+9. Some screens still show starter-kit residue, typos, or incomplete UX wiring.
+   - Example: 'Active disptaches' typo in admin active-dispatches page.
+   - System logs page computes filter state and actions, but visible filter controls are not currently rendered.
+   - Several files contain unused imports and residual placeholder patterns from the original starter kit.
+
+======================================================================
+19. RECOMMENDED NEXT STEPS
+======================================================================
+High-priority engineering improvements:
+- Move all websocket and routing API credentials/hosts into environment variables.
+- Add real database migrations and stop relying on an empty migrations directory.
+- Add domain tests for reservation lifecycle, fleet assignment, task status transitions, and auth_token middleware.
+- Normalize Dispatch/Vehicle relationship modeling.
+- Standardize log module names and status vocabularies.
+- Make admin user deletion log to SystemLog.
+- Guard driver task queries against missing assigned vehicles.
+- Decide on one primary auth approach and simplify around it.
+
+Product/UX improvements:
+- Complete visible filter UI on the logs page.
+- Add customer-specific reservation detail page rather than reusing admin detail view.
+- Add fleet edit/reassign and driver management history workflows.
+- Improve error handling/empty states around live maps and geolocation denial.
+
+======================================================================
+20. DETAILED FILE APPENDICES
+======================================================================
+A. Controllers (21 files)
+
+- app/Http/Controllers/ActiveDispatchController.php
+- app/Http/Controllers/UserController.php
+- app/Http/Controllers/SystemLogController.php
+- app/Http/Controllers/Settings/ProfileController.php
+- app/Http/Controllers/Settings/PasswordController.php
+- app/Http/Controllers/ReservationController.php
+- app/Http/Controllers/MyReservationController.php
+- app/Http/Controllers/MyActiveReservationsController.php
+- app/Http/Controllers/FleetController.php
+- app/Http/Controllers/Driver/TaskController.php
+- app/Http/Controllers/Driver/LocationController.php
+- app/Http/Controllers/DashboardController.php
+- app/Http/Controllers/Controller.php
+- app/Http/Controllers/Auth/VerifyEmailController.php
+- app/Http/Controllers/Auth/RegisteredUserController.php
+- app/Http/Controllers/Auth/PasswordResetLinkController.php
+- app/Http/Controllers/Auth/NewPasswordController.php
+- app/Http/Controllers/Auth/EmailVerificationPromptController.php
+- app/Http/Controllers/Auth/EmailVerificationNotificationController.php
+- app/Http/Controllers/Auth/ConfirmablePasswordController.php
+- app/Http/Controllers/Auth/AuthenticatedSessionController.php
+
+B. Models (6 files)
+- app/Models/Vehicle.php
+- app/Models/User.php
+- app/Models/SystemLog.php
+- app/Models/Reservation.php
+- app/Models/Driver.php
+- app/Models/Dispatch.php
+
+C. Route Files (15 files)
+- routes/logs.php
+- routes/job.php
+- routes/fleet.php
+- routes/console.php
+- routes/channels.php
+- routes/auth.php
+- routes/api.php
+- routes/active-dispatches.php
+- routes/reservations.php
+- routes/my-reservations.php
+- routes/my-active-reservations.php
+- routes/task.php
+- routes/settings.php
+- routes/user.php
+- routes/web.php
+
+D. React Pages (28 files)
+- resources/js/pages/welcome.tsx
+- resources/js/pages/settings/appearance.tsx
+- resources/js/pages/settings/profile.tsx
+- resources/js/pages/settings/password.tsx
+- resources/js/pages/auth/verify-email.tsx
+- resources/js/pages/auth/reset-password.tsx
+- resources/js/pages/auth/register.tsx
+- resources/js/pages/auth/login.tsx
+- resources/js/pages/auth/forgot-password.tsx
+- resources/js/pages/auth/confirm-password.tsx
+- resources/js/pages/admin/active-dispatches.tsx
+- resources/js/pages/driver/tasks.tsx
+- resources/js/pages/driver/task-details.tsx
+- resources/js/pages/driver/dashboard.tsx
+- resources/js/pages/admin/users.tsx
+- resources/js/pages/admin/system-logs.tsx
+- resources/js/pages/admin/reservation-details.tsx
+- resources/js/pages/admin/reservations.tsx
+- resources/js/pages/admin/fleet-details.tsx
+- resources/js/pages/admin/fleet-management.tsx
+- resources/js/pages/admin/dashboard.tsx
+- resources/js/pages/customer/my-reservations.tsx
+- resources/js/pages/customer/dashboard.tsx
+- resources/js/pages/customer/active-reservations.tsx
+- resources/js/pages/admin/new-reservation/summary.tsx
+- resources/js/pages/admin/new-reservation/location.tsx
+- resources/js/pages/admin/new-reservation/details.tsx
+- resources/js/pages/admin/new-reservation/availability.tsx
+
+E. React Components (78 files)
+- resources/js/components/app-content.tsx
+- resources/js/components/address-combo-box.tsx
+- resources/js/components/active-dispatch.tsx
+- resources/js/components/app-logo-icon.tsx
+- resources/js/components/app-header.tsx
+- resources/js/components/app-logo.tsx
+- resources/js/components/app-shell.tsx
+- resources/js/components/floating-reservation-details.tsx
+- resources/js/components/driver.tsx
+- resources/js/components/delete-user.tsx
+- resources/js/components/delete-reservation.tsx
+- resources/js/components/delete-account.tsx
+- resources/js/components/data-table.tsx
+- resources/js/components/current_location.tsx
+- resources/js/components/create-user-modal.tsx
+- resources/js/components/appearance-tabs.tsx
+- resources/js/components/appearance-dropdown.tsx
+- resources/js/components/app-sidebar.tsx
+- resources/js/components/app-sidebar-header.tsx
+- resources/js/components/calendar.tsx
+- resources/js/components/breadcrumbs.tsx
+- resources/js/components/columns-menu.tsx
+- resources/js/components/reservation-list.tsx
+- resources/js/components/reservation-card.tsx
+- resources/js/components/pagination.tsx
+- resources/js/components/nav-user.tsx
+- resources/js/components/nav-main.tsx
+- resources/js/components/nav-footer.tsx
+- resources/js/components/modal.tsx
+- resources/js/components/map-route.tsx
+- resources/js/components/map-route-preview.tsx
+- resources/js/components/location-marker.tsx
+- resources/js/components/live-vehicle-location.tsx
+- resources/js/components/input-error.tsx
+- resources/js/components/icon.tsx
+- resources/js/components/heading.tsx
+- resources/js/components/heading-small.tsx
+- resources/js/components/task.tsx
+- resources/js/components/tab-order-details.tsx
+- resources/js/components/tab-driver-information.tsx
+- resources/js/components/status-tag.tsx
+- resources/js/components/search-bar.tsx
+- resources/js/components/routing-machine.tsx
+- resources/js/components/route-polyline.tsx
+- resources/js/components/reservation-map-view.tsx
+- resources/js/components/user-list.tsx
+- resources/js/components/user-info.tsx
+- resources/js/components/vehicle-card.tsx
+- resources/js/components/user-view-modal.tsx
+- resources/js/components/user-menu-content.tsx
+- resources/js/components/context/siebar-context.tsx
+- resources/js/components/context/new-reservation-context.tsx
+- resources/js/components/context/modal-context.tsx
+- resources/js/components/text-link.tsx
+- resources/js/components/ui/alert.tsx
+- resources/js/components/ui/avatar.tsx
+- resources/js/components/ui/collapsible.tsx
+- resources/js/components/ui/checkbox.tsx
+- resources/js/components/ui/card.tsx
+- resources/js/components/ui/button.tsx
+- resources/js/components/ui/breadcrumb.tsx
+- resources/js/components/ui/badge.tsx
+- resources/js/components/ui/dropdown-menu.tsx
+- resources/js/components/ui/dialog.tsx
+- resources/js/components/ui/data-list.tsx
+- resources/js/components/ui/input.tsx
+- resources/js/components/ui/icon.tsx
+- resources/js/components/ui/label.tsx
+- resources/js/components/ui/navigation-menu.tsx
+- resources/js/components/ui/placeholder-pattern.tsx
+- resources/js/components/ui/sidebar.tsx
+- resources/js/components/ui/sheet.tsx
+- resources/js/components/ui/separator.tsx
+- resources/js/components/ui/select.tsx
+- resources/js/components/ui/toggle-group.tsx
+- resources/js/components/ui/skeleton.tsx
+- resources/js/components/ui/toggle.tsx
+- resources/js/components/ui/tooltip.tsx
+
+F. Layout Files (13 files)
+- resources/js/layouts/app-layout.tsx
+- resources/js/layouts/users/layout.tsx
+- resources/js/layouts/app/app-sidebar-layout.tsx
+- resources/js/layouts/app/app-header-layout.tsx
+- resources/js/layouts/auth-layout.tsx
+- resources/js/layouts/fleet-management/layout.tsx
+- resources/js/layouts/settings/layout.tsx
+- resources/js/layouts/auth/auth-split-layout.tsx
+- resources/js/layouts/auth/auth-simple-layout.tsx
+- resources/js/layouts/auth/auth-card-layout.tsx
+- resources/js/layouts/create-reservation/layout.tsx
+- resources/js/layouts/reservation-details/layout.tsx
+- resources/js/layouts/reservations/layout.tsx
+
+G. Seeder Files (15 files)
+- database/seeders/CustomersSeeder.php
+- database/seeders/CacheSeeder.php
+- database/seeders/ApiSeeder.php
+- database/seeders/DispatchesSeeder.php
+- database/seeders/DatabaseSeeder.php
+- database/seeders/DriversSeeder.php
+- database/seeders/VehiclesSeeder.php
+- database/seeders/UsersSeeder.php
+- database/seeders/SessionsSeeder.php
+- database/seeders/ReservationsSeeder.php
+- database/seeders/PricingSeeder.php
+- database/seeders/PaymentsSeeder.php
+- database/seeders/MigrationsSeeder.php
+- database/seeders/LogsSeeder.php
+- database/seeders/DriverUsersSeeder.php
+
+H. Test Files (11 files)
+- tests/Unit/ExampleTest.php
+- tests/TestCase.php
+- tests/Feature/DashboardTest.php
+- tests/Feature/Settings/ProfileUpdateTest.php
+- tests/Feature/Settings/PasswordUpdateTest.php
+- tests/Feature/Auth/VerificationNotificationTest.php
+- tests/Feature/Auth/RegistrationTest.php
+- tests/Feature/Auth/PasswordResetTest.php
+- tests/Feature/Auth/PasswordConfirmationTest.php
+- tests/Feature/Auth/EmailVerificationTest.php
+- tests/Feature/Auth/AuthenticationTest.php
+
+I. Full First-Party File Inventory (321 files)
+- vite.config.ts
+- tsconfig.json
+- phpunit.xml
+- package.json
+- package-lock.json
+- eslint.config.js
+- Dockerfile
+- docker-entrypoint.sh
+- tests/Unit/ExampleTest.php
+- tests/TestCase.php
+- config/session.php
+- config/services.php
+- config/reverb.php
+- config/queue.php
+- config/mail.php
+- config/logging.php
+- config/inertia.php
+- config/filesystems.php
+- config/database.php
+- config/cache.php
+- config/broadcasting.php
+- config/auth.php
+- config/app.php
+- composer.lock
+- composer.json
+- components.json
+- bootstrap/providers.php
+- artisan
+- bootstrap/app.php
+- supervisord.conf
+- README.md
+- tests/Feature/DashboardTest.php
+- database/seeders/CustomersSeeder.php
+- database/seeders/CacheSeeder.php
+- database/seeders/ApiSeeder.php
+- database/seeders/DispatchesSeeder.php
+- database/seeders/DatabaseSeeder.php
+- database/seeders/DriversSeeder.php
+- database/seeders/VehiclesSeeder.php
+- database/seeders/UsersSeeder.php
+- database/seeders/SessionsSeeder.php
+- database/seeders/ReservationsSeeder.php
+- database/seeders/PricingSeeder.php
+- database/seeders/PaymentsSeeder.php
+- tests/Feature/Settings/ProfileUpdateTest.php
+- database/seeders/MigrationsSeeder.php
+- database/seeders/LogsSeeder.php
+- tests/Feature/Settings/PasswordUpdateTest.php
+- database/seeders/DriverUsersSeeder.php
+- database/factories/UserFactory.php
+- tests/Feature/Auth/VerificationNotificationTest.php
+- tests/Feature/Auth/RegistrationTest.php
+- tests/Feature/Auth/PasswordResetTest.php
+- tests/Feature/Auth/PasswordConfirmationTest.php
+- tests/Feature/Auth/EmailVerificationTest.php
+- tests/Feature/Auth/AuthenticationTest.php
+- routes/logs.php
+- routes/job.php
+- routes/fleet.php
+- routes/console.php
+- routes/channels.php
+- routes/auth.php
+- routes/api.php
+- routes/active-dispatches.php
+- routes/reservations.php
+- routes/my-reservations.php
+- routes/my-active-reservations.php
+- routes/task.php
+- routes/settings.php
+- routes/user.php
+- routes/web.php
+- bootstrap/cache/.gitignore
+- public/robots.txt
+- public/logo.svg
+- public/index.php
+- public/favicon.svg
+- public/favicon.ico
+- public/apple-touch-icon.png
+- app/Providers/AppServiceProvider.php
+- app/Models/Vehicle.php
+- app/Models/User.php
+- app/Models/SystemLog.php
+- app/Models/Reservation.php
+- app/Models/Driver.php
+- app/Models/Dispatch.php
+- app/Events/VehicleLocationUpdated.php
+- app/Events/ReservationDeleted.php
+- app/Events/ReservationCreated.php
+- storage/logs/.gitignore
+- resources/css/app.css
+- app/Http/Middleware/HandleAppearance.php
+- app/Http/Middleware/AttachTokenFromCookie.php
+- app/Http/Middleware/TrustProxies.php
+- app/Http/Middleware/HandleInertiaRequests.php
+- resources/views/app.blade.php
+- public/assets/images/truck.png
+- public/assets/images/mitsubishi-l300.png
+- public/assets/images/michael_archangel_logo.svg
+- public/assets/images/Logo.svg
+- public/assets/images/avatar.png
+- public/assets/images/AppLogo.jpg
+- app/Http/Requests/CreateUserRequest.php
+- resources/css/fonts/LicensePlate.ttf
+- app/Http/Controllers/ActiveDispatchController.php
+- app/Http/Controllers/UserController.php
+- app/Http/Controllers/SystemLogController.php
+- resources/js/wayfinder/index.ts
+- app/Http/Requests/Auth/LoginRequest.php
+- app/Http/Requests/Reservation/ProcessStep4Request.php
+- app/Http/Requests/Reservation/ProcessStep3Request.php
+- app/Http/Requests/Reservation/ProcessStep2Request.php
+- app/Http/Requests/Reservation/ProcessStep1Request.php
+- storage/app/.gitignore
+- app/Http/Requests/Settings/ProfileUpdateRequest.php
+- resources/js/types/vite-env.d.ts
+- resources/js/types/index.d.ts
+- app/Http/Controllers/Settings/ProfileController.php
+- app/Http/Controllers/Settings/PasswordController.php
+- resources/js/ssr.tsx
+- app/Http/Controllers/ReservationController.php
+- app/Http/Controllers/MyReservationController.php
+- app/Http/Controllers/MyActiveReservationsController.php
+- app/Http/Controllers/FleetController.php
+- storage/app/public/.gitignore
+- resources/js/layouts/app-layout.tsx
+- storage/framework/views/.gitignore
+- resources/js/bootstrap.ts
+- resources/js/app.tsx
+- resources/js/layouts/users/layout.tsx
+- app/Http/Controllers/Driver/TaskController.php
+- app/Http/Controllers/Driver/LocationController.php
+- app/Http/Controllers/DashboardController.php
+- app/Http/Controllers/Controller.php
+- storage/framework/sessions/.gitignore
+- resources/js/layouts/app/app-sidebar-layout.tsx
+- resources/js/layouts/app/app-header-layout.tsx
+- resources/js/layouts/auth-layout.tsx
+- resources/js/layouts/fleet-management/layout.tsx
+- storage/app/private/.gitignore
+- resources/js/layouts/settings/layout.tsx
+- storage/framework/testing/.gitignore
+- app/Http/Controllers/Auth/VerifyEmailController.php
+- app/Http/Controllers/Auth/RegisteredUserController.php
+- app/Http/Controllers/Auth/PasswordResetLinkController.php
+- app/Http/Controllers/Auth/NewPasswordController.php
+- app/Http/Controllers/Auth/EmailVerificationPromptController.php
+- app/Http/Controllers/Auth/EmailVerificationNotificationController.php
+- app/Http/Controllers/Auth/ConfirmablePasswordController.php
+- app/Http/Controllers/Auth/AuthenticatedSessionController.php
+- resources/js/hooks/use-mobile.tsx
+- resources/js/hooks/use-mobile-navigation.ts
+- resources/js/hooks/use-initials.tsx
+- resources/js/hooks/use-appearance.tsx
+- storage/framework/cache/.gitignore
+- resources/js/layouts/auth/auth-split-layout.tsx
+- resources/js/layouts/auth/auth-simple-layout.tsx
+- resources/js/layouts/auth/auth-card-layout.tsx
+- resources/js/layouts/create-reservation/layout.tsx
+- resources/js/layouts/reservation-details/layout.tsx
+- resources/js/routes/my-reservations/index.ts
+- resources/js/routes/fleet/index.ts
+- resources/js/actions/App/index.ts
+- storage/framework/cache/data/.gitignore
+- resources/js/routes/verification/index.ts
+- resources/js/routes/task/index.ts
+- resources/js/components/app-content.tsx
+- resources/js/components/address-combo-box.tsx
+- resources/js/components/active-dispatch.tsx
+- resources/js/components/app-logo-icon.tsx
+- resources/js/components/app-header.tsx
+- resources/js/components/app-logo.tsx
+- resources/js/components/app-shell.tsx
+- resources/js/layouts/reservations/layout.tsx
+- resources/js/routes/sanctum/index.ts
+- resources/js/pages/welcome.tsx
+- resources/js/routes/my-active-reservations/index.ts
+- resources/js/routes/active-dispatches/index.ts
+- resources/js/actions/App/Http/index.ts
+- resources/js/routes/users/index.ts
+- resources/js/components/floating-reservation-details.tsx
+- resources/js/components/driver.tsx
+- resources/js/components/delete-user.tsx
+- resources/js/components/delete-reservation.tsx
+- resources/js/components/delete-account.tsx
+- resources/js/components/data-table.tsx
+- resources/js/components/current_location.tsx
+- resources/js/components/create-user-modal.tsx
+- resources/js/routes/storage/index.ts
+- resources/js/components/appearance-tabs.tsx
+- resources/js/components/appearance-dropdown.tsx
+- resources/js/components/app-sidebar.tsx
+- resources/js/components/app-sidebar-header.tsx
+- resources/js/components/calendar.tsx
+- resources/js/components/breadcrumbs.tsx
+- resources/js/components/columns-menu.tsx
+- resources/js/actions/Illuminate/index.ts
+- resources/js/routes/reservations/index.ts
+- resources/js/routes/user/index.ts
+- resources/js/components/reservation-list.tsx
+- resources/js/components/reservation-card.tsx
+- resources/js/components/pagination.tsx
+- resources/js/components/nav-user.tsx
+- resources/js/components/nav-main.tsx
+- resources/js/components/nav-footer.tsx
+- resources/js/components/modal.tsx
+- resources/js/components/map-route.tsx
+- resources/js/components/map-route-preview.tsx
+- resources/js/components/location-marker.tsx
+- resources/js/components/live-vehicle-location.tsx
+- resources/js/components/input-error.tsx
+- resources/js/components/icon.tsx
+- resources/js/components/heading.tsx
+- resources/js/components/heading-small.tsx
+- resources/js/components/task.tsx
+- resources/js/components/tab-order-details.tsx
+- resources/js/components/tab-driver-information.tsx
+- resources/js/components/status-tag.tsx
+- resources/js/components/search-bar.tsx
+- resources/js/components/routing-machine.tsx
+- resources/js/components/route-polyline.tsx
+- resources/js/components/reservation-map-view.tsx
+- resources/js/components/user-list.tsx
+- resources/js/components/user-info.tsx
+- resources/js/components/vehicle-card.tsx
+- resources/js/components/user-view-modal.tsx
+- resources/js/components/user-menu-content.tsx
+- resources/js/actions/Laravel/index.ts
+- resources/js/routes/login/index.ts
+- resources/js/routes/index.ts
+- resources/js/routes/logs/index.ts
+- resources/js/actions/App/Http/Controllers/UserController.ts
+- resources/js/actions/App/Http/Controllers/SystemLogController.ts
+- resources/js/components/context/siebar-context.tsx
+- resources/js/components/context/new-reservation-context.tsx
+- resources/js/components/context/modal-context.tsx
+- resources/js/actions/App/Http/Controllers/FleetController.ts
+- resources/js/actions/Illuminate/Broadcasting/index.ts
+- resources/js/actions/Illuminate/Broadcasting/BroadcastController.ts
+- resources/js/components/text-link.tsx
+- resources/js/actions/App/Http/Controllers/ActiveDispatchController.ts
+- resources/js/actions/Illuminate/Routing/RedirectController.ts
+- resources/js/actions/Illuminate/Routing/index.ts
+- resources/js/routes/reservations/edit/index.ts
+- resources/js/actions/App/Http/Controllers/MyActiveReservationsController.ts
+- resources/js/actions/App/Http/Controllers/index.ts
+- resources/js/actions/App/Http/Controllers/MyReservationController.ts
+- resources/js/actions/App/Http/Controllers/ReservationController.ts
+- resources/js/pages/settings/appearance.tsx
+- resources/js/pages/settings/profile.tsx
+- resources/js/pages/settings/password.tsx
+- resources/js/routes/register/index.ts
+- resources/js/pages/auth/verify-email.tsx
+- resources/js/pages/auth/reset-password.tsx
+- resources/js/pages/auth/register.tsx
+- resources/js/pages/auth/login.tsx
+- resources/js/pages/auth/forgot-password.tsx
+- resources/js/pages/auth/confirm-password.tsx
+- resources/js/routes/profile/index.ts
+- resources/js/components/ui/alert.tsx
+- resources/js/components/ui/avatar.tsx
+- resources/js/actions/App/Http/Controllers/Settings/ProfileController.ts
+- resources/js/actions/App/Http/Controllers/Settings/PasswordController.ts
+- resources/js/actions/App/Http/Controllers/Settings/index.ts
+- resources/js/actions/App/Http/Controllers/Auth/AuthenticatedSessionController.ts
+- resources/js/components/ui/collapsible.tsx
+- resources/js/components/ui/checkbox.tsx
+- resources/js/components/ui/card.tsx
+- resources/js/components/ui/button.tsx
+- resources/js/components/ui/breadcrumb.tsx
+- resources/js/components/ui/badge.tsx
+- resources/js/actions/App/Http/Controllers/Auth/ConfirmablePasswordController.ts
+- resources/js/components/ui/dropdown-menu.tsx
+- resources/js/components/ui/dialog.tsx
+- resources/js/components/ui/data-list.tsx
+- resources/js/components/ui/input.tsx
+- resources/js/components/ui/icon.tsx
+- resources/js/components/ui/label.tsx
+- resources/js/components/ui/navigation-menu.tsx
+- resources/js/actions/App/Http/Controllers/Driver/index.ts
+- resources/js/actions/App/Http/Controllers/Driver/TaskController.ts
+- resources/js/pages/admin/active-dispatches.tsx
+- resources/js/actions/App/Http/Controllers/Auth/EmailVerificationNotificationController.ts
+- resources/js/components/ui/placeholder-pattern.tsx
+- resources/js/pages/driver/tasks.tsx
+- resources/js/pages/driver/task-details.tsx
+- resources/js/pages/driver/dashboard.tsx
+- resources/js/actions/App/Http/Controllers/Auth/NewPasswordController.ts
+- resources/js/actions/App/Http/Controllers/Auth/index.ts
+- resources/js/actions/App/Http/Controllers/Auth/EmailVerificationPromptController.ts
+- resources/js/actions/App/Http/Controllers/Auth/RegisteredUserController.ts
+- resources/js/actions/App/Http/Controllers/Auth/PasswordResetLinkController.ts
+- resources/js/actions/App/Http/Controllers/Auth/VerifyEmailController.ts
+- resources/js/components/ui/sidebar.tsx
+- resources/js/components/ui/sheet.tsx
+- resources/js/components/ui/separator.tsx
+- resources/js/components/ui/select.tsx
+- resources/js/components/ui/toggle-group.tsx
+- resources/js/components/ui/skeleton.tsx
+- resources/js/components/ui/toggle.tsx
+- resources/js/pages/admin/users.tsx
+- resources/js/components/ui/tooltip.tsx
+- resources/js/pages/admin/system-logs.tsx
+- resources/js/pages/admin/reservation-details.tsx
+- resources/js/pages/admin/reservations.tsx
+- resources/js/pages/admin/fleet-details.tsx
+- resources/js/pages/admin/fleet-management.tsx
+- resources/js/pages/admin/dashboard.tsx
+- resources/js/routes/password/index.ts
+- resources/js/pages/customer/my-reservations.tsx
+- resources/js/pages/customer/dashboard.tsx
+- resources/js/pages/customer/active-reservations.tsx
+- resources/js/actions/Laravel/Sanctum/index.ts
+- resources/js/lib/utils.ts
+- resources/js/pages/admin/new-reservation/summary.tsx
+- resources/js/pages/admin/new-reservation/location.tsx
+- resources/js/pages/admin/new-reservation/details.tsx
+- resources/js/pages/admin/new-reservation/availability.tsx
+- resources/js/routes/password/confirm/index.ts
+- resources/js/actions/Laravel/Sanctum/Http/index.ts
+- resources/js/actions/Laravel/Sanctum/Http/Controllers/index.ts
+- resources/js/actions/Laravel/Sanctum/Http/Controllers/CsrfCookieController.ts

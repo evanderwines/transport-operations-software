@@ -37,6 +37,7 @@ const VehicleCard = () => {
                             <CardContent>
                                 <CardTitle>{vehicle.model}</CardTitle>
                                 <CardDescription>
+                                    <p className='text-gray-600 text-sm mb-2'>{vehicle.driver.name}</p>
                                     <ul className="flex flex-col gap-2 text-xs mt-3">
                                         <li>Payload capacity up to 1,215 kg</li>
                                         <li>4,440 mm x 1,695 mm</li>

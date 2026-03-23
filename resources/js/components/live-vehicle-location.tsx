@@ -13,7 +13,7 @@ function lerp(a: number, b: number, t: number) {
 const vehicleIcon = L.icon({
     iconUrl: TruckLogo, 
     iconSize: [80, 80],
-    iconAnchor: [20, 20],
+    iconAnchor: [40, 40],
     popupAnchor: [0, -20],
     shadowUrl: undefined,
     shadowSize: undefined,
@@ -28,7 +28,7 @@ export default function LiveVehicleLocation({ vehicleLoc }: { vehicleLoc: LatLng
     const targetRef = useRef<LatLngLike>(vehicleLoc);
 
     // Exponential smoothing factor for raw GPS -> target
-    const ALPHA = 0.5; // 0.1 = heavy smoothing, 0.5 = light smoothing
+    const ALPHA = 0.35; // 0.1 = heavy smoothing, 0.5 = light smoothing
 
     // Animation state
     const animRef = useRef<{ start: number; duration: number; from: LatLngLike; to: LatLngLike } | null>(null);

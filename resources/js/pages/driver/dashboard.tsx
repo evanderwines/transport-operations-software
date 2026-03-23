@@ -95,7 +95,7 @@ export default function Dashboard() {
                                 {props.metrics.assigned_vehicle ? (
                                     <>
                                         <p className="mt-2 text-xl font-semibold">
-                                            {props.metrics.assigned_vehicle.model}&nbsp;
+                                            {props.metrics.assigned_vehicle.model}&nbsp;    
                                             <span className='text-xs text-white/60'>
                                             {props.metrics.assigned_vehicle.plate_number}
                                             </span>

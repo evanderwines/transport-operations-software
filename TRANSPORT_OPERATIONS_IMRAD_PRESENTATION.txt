@@ -1,0 +1,137 @@
+TRANSPORT OPERATIONS SOFTWARE
+IMRAD PRESENTATION VERSION
+Prepared from: PROJECT_DOCUMENTATION_REPORT.txt
+Date: 2026-03-22
+
+======================================================================
+I. INTRODUCTION
+======================================================================
+Transport operations often involve separate workflows for booking, dispatching,
+fleet monitoring, driver coordination, and customer updates. When these
+processes are handled through disconnected tools, it becomes harder to monitor
+active trips, assign resources efficiently, and maintain accurate records.
+
+This project was developed to provide a centralized transport operations system
+for three main user groups:
+- Administrators
+- Drivers
+- Customers
+
+The main objective of the system is to improve operational visibility and
+coordination by combining reservation management, dispatch monitoring, fleet
+management, live vehicle tracking, and system logging in one web application.
+
+Specifically, the system aims to:
+- manage reservations from creation to completion
+- assign vehicles and monitor dispatch activity
+- support drivers through task and location updates
+- allow customers to track their reservations
+- provide logs and dashboards for operational decision-making
+
+======================================================================
+II. METHODS
+======================================================================
+The project was analyzed through a repository-wide review of the application
+codebase, including backend, frontend, routes, configuration, seeders, and
+tests.
+
+Development approach:
+- Backend framework: Laravel 12
+- Frontend framework: React 19 with TypeScript
+- Rendering model: Inertia.js
+- Authentication: Laravel Sanctum with token-cookie handling
+- Realtime communication: Laravel Reverb, Echo, and Pusher-compatible client
+- Mapping and tracking: Leaflet, React Leaflet, and GraphHopper routing
+- UI framework: Tailwind CSS with shadcn/ui and Radix components
+
+System architecture:
+- Laravel handles routing, validation, authentication, and data access.
+- React handles dashboards, forms, filters, and map interfaces.
+- Sanctum protects authenticated pages.
+- A custom middleware attaches the auth token from cookie to request headers.
+- Realtime events update reservations and vehicle locations.
+
+Main modules examined:
+- Dashboard
+- Users
+- Reservations
+- Active Dispatches
+- Fleet Management
+- Driver Tasks
+- Customer Reservations
+- System Logs
+
+======================================================================
+III. RESULTS
+======================================================================
+The analysis shows that the application already provides a complete
+role-oriented transport management workflow.
+
+Administrator features:
+- role-based admin dashboard with live database metrics
+- user management for customers, drivers, and administrators
+- multi-step reservation creation and editing
+- active dispatch monitoring
+- fleet overview and vehicle creation
+- system log viewing and reporting
+
+Driver features:
+- driver dashboard with assigned vehicle and task summary
+- task list based on assigned vehicle
+- task detail page with map-based route view
+- live vehicle location broadcasting
+- task status progression from pickup to completion
+
+Customer features:
+- customer dashboard with reservation statistics
+- personal reservation history
+- active reservation tracking with map view
+- server-side search for active reservations
+
+Cross-system results:
+- realtime reservation and vehicle updates are supported
+- operational data is visualized through dashboards
+- audit trails are available through system logs
+- server-side filtering is implemented in major modules
+- deployment support is present through Docker and Supervisor files
+
+Overall result:
+The system successfully integrates reservation, dispatch, fleet, driver, and
+customer workflows into a single operational platform.
+
+======================================================================
+IV. DISCUSSION
+======================================================================
+The project demonstrates a strong operational design because it separates
+features by user role while keeping all transport workflows inside one system.
+This improves coordination, visibility, and accountability.
+
+Major strengths:
+- clear separation of administrator, driver, and customer workflows
+- realtime vehicle tracking and operational updates
+- dashboard-driven monitoring
+- integrated system logging for traceability
+- practical support for dispatch and fleet operations
+
+Observed limitations:
+- authentication uses a mixed approach between starter-kit web auth and custom
+  API token-cookie auth
+- some credentials and external service values are hardcoded in source files
+- the database migrations directory is empty, which weakens schema
+  documentation
+- some model and type definitions are inconsistent
+- domain-specific automated tests are still limited
+
+Recommended next steps:
+- move hardcoded keys and hosts into environment variables
+- add and maintain proper database migrations
+- expand tests for reservations, dispatching, fleet, and auth middleware
+- normalize model relationships and status naming
+- improve smaller UX gaps such as incomplete filter UIs and customer-specific
+  detail pages
+
+Presentation takeaway:
+The transport operations software is a functional multi-role system that
+already supports core business processes and realtime monitoring. With further
+improvements in security, testing, and data structure consistency, it can
+become a more maintainable and production-ready platform.

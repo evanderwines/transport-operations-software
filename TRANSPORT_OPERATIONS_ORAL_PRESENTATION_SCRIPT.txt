@@ -1,0 +1,44 @@
+TRANSPORT OPERATIONS SOFTWARE
+3-5 MINUTE ORAL PRESENTATION SCRIPT
+
+Good day everyone.
+
+Today, I will be presenting our Transport Operations Software, a centralized web-based system designed to improve how transport-related activities are managed, monitored, and coordinated.
+
+In many transport operations, important processes such as reservation handling, dispatching, fleet monitoring, driver coordination, and customer updates are often managed using separate tools or manual methods. Because of this, organizations may experience delays, miscommunication, limited visibility, and difficulty tracking ongoing operations.
+
+To address these problems, we developed a system that brings these workflows together into one platform. The system is designed for three main user groups: administrators, drivers, and customers.
+
+Our main objective was to create a transport management system that can support the full operational flow, from reservation creation up to dispatch monitoring and trip completion, while also improving tracking, accountability, and decision-making.
+
+Now, moving to the methods used in developing and analyzing the system.
+
+The project was built using Laravel 12 for the backend and React with TypeScript for the frontend. We used Inertia.js to connect the backend and frontend smoothly, allowing us to build a modern single-page application while still using Laravel controllers and server-side routing.
+
+For authentication, the project uses Laravel Sanctum. For real-time features such as live vehicle updates, the system uses Laravel Reverb together with Echo and a Pusher-compatible client. For mapping and route visualization, we used Leaflet and React Leaflet, while GraphHopper was used for route computation.
+
+In terms of system structure, Laravel handles routing, validation, authentication, and data processing. React handles user interfaces such as dashboards, forms, filters, and maps. The application is also role-based, meaning that each type of user sees only the features relevant to their responsibilities.
+
+Now, for the results of the project.
+
+Based on the system analysis, the application already supports the major workflows needed in transport operations.
+
+For administrators, the system provides a dashboard with operational metrics, user management, reservation management, active dispatch monitoring, fleet management, and system logs. This allows administrators to oversee resources, bookings, and ongoing transport activity from one place.
+
+For drivers, the system provides a dashboard, a task list, and a task detail page. Drivers can see their assigned reservations, track routes through a map interface, send live location updates, and update task statuses as they move from pickup to drop-off.
+
+For customers, the system provides a dashboard, a reservation history page, and an active reservations page. Customers can monitor their own reservations and view active trips with map-based tracking.
+
+One of the strongest results of the system is its real-time capability. Vehicle location updates can be broadcast live, and reservation-related updates can also be reflected in the interface. In addition, the system includes logging features that help track important activities for monitoring and accountability.
+
+Now, for the discussion.
+
+The project shows that a role-based transport operations platform can effectively combine multiple workflows into a single system. Instead of handling reservations, dispatches, fleets, and tracking separately, the platform integrates them into one operational environment. This improves efficiency, reduces confusion, and provides better visibility for both management and users.
+
+The system also has several strengths. These include clear separation of user roles, dashboard-based monitoring, fleet and reservation management, real-time vehicle tracking, and system logs for traceability.
+
+However, the project also has some areas for improvement. These include strengthening security by moving hardcoded configuration values into environment variables, adding proper database migrations, improving consistency in some data relationships, and expanding automated tests for the major business workflows.
+
+In conclusion, the Transport Operations Software is a functional and promising platform for managing transport operations in a more organized and efficient way. It already supports the essential workflows for administrators, drivers, and customers, while also providing real-time monitoring and operational visibility. With further refinement in testing, security, and data structure consistency, the system can become even more reliable and production-ready.
+
+Thank you, and that ends my presentation.

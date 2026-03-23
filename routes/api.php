@@ -10,7 +10,9 @@ Route::post('login', function (Request $request) {
     $credentials = $request->validate([
         'email' => ['required', 'email'],
         'password' => ['required', 'string'],
+        'remember' => ['nullable', 'boolean'],
     ]);
+    $remember = (bool) ($credentials['remember'] ?? false);
 
     $user = User::where('email', $credentials['email'])->first();
 
@@ -30,7 +32,7 @@ Route::post('login', function (Request $request) {
         ->withCookie(cookie(
             name: 'auth_token',
             value: $token,
-            minutes: 120,
+            minutes: $remember ? 43200 : 120,
             path: '/',
             secure: true,
             httpOnly: true,
