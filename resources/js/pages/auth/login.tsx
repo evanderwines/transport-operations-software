@@ -145,7 +145,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         </div>
                     </section>
 
-                    <section className="flex items-center mt-3 justify-center bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.10),transparent_30%),linear-gradient(180deg,#fffdf7_0%,#f8fafc_42%,#eef2ff_100%)] px-6 py-10 sm:px-8">
+                    <section className="flex items-start mt-4 mt-3 justify-center bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.10),transparent_30%),linear-gradient(180deg,#fffdf7_0%,#f8fafc_42%,#eef2ff_100%)] px-6 py-10 sm:px-8">
                         <div className="w-full max-w-md">
                             <Link href={home()} className="mb-8 flex items-center gap-4 lg:hidden">
                                 <ProjectLogo className="w-14 drop-shadow-sm" />
