@@ -77,9 +77,6 @@ export default function Welcome() {
 
                 <main className="mx-auto grid max-w-7xl gap-10 px-6 pt-4 pb-14 lg:grid-cols-[1.15fr_0.85fr] lg:px-8 lg:pb-16">
                     <section className="flex flex-col justify-center">
-                        <span className="inline-flex w-fit items-center rounded-full border border-amber-200 bg-amber-50 px-4 py-1 text-sm font-medium text-amber-800 shadow-sm">
-                            Dedicated control center for your transport workflows
-                        </span>
 
                         <div className="mt-6 space-y-6">
                             <div className="space-y-4">
