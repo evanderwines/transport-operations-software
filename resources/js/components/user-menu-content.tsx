@@ -18,10 +18,15 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
         cleanup();
         router.flushAll();
         localStorage.removeItem('auth_token');
+        localStorage.removeItem('newReservation');
+        sessionStorage.clear();
         document.cookie = 'auth_token=; Path=/; Max-Age=0; SameSite=Lax';
         document.cookie = 'auth_token=; Path=/; Max-Age=0; SameSite=Lax; Secure';
         if (window.axios) {
             delete window.axios.defaults.headers.common.Authorization;
+        }
+        if (window.Echo) {
+            window.Echo.disconnect();
         }
     };
 

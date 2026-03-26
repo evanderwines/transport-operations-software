@@ -106,7 +106,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                 <div className="space-y-5">
                                     
                                     <div className="space-y-4">
-                                        <h2 className="text-5xl font-semibold tracking-tight text-balance text-white">
+                                        <h2 className="text-5xl mt-3 font-semibold tracking-tight text-balance text-white">
                                             Keep reservations, dispatches, and fleet movement in sync.
                                         </h2>
                                         <p className="max-w-xl text-lg leading-8 text-slate-300">
@@ -145,7 +145,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         </div>
                     </section>
 
-                    <section className="flex items-start mt-3 justify-center bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.10),transparent_30%),linear-gradient(180deg,#fffdf7_0%,#f8fafc_42%,#eef2ff_100%)] px-6 py-10 sm:px-8">
+                    <section className="flex items-center mt-3 justify-center bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.10),transparent_30%),linear-gradient(180deg,#fffdf7_0%,#f8fafc_42%,#eef2ff_100%)] px-6 py-10 sm:px-8">
                         <div className="w-full max-w-md">
                             <Link href={home()} className="mb-8 flex items-center gap-4 lg:hidden">
                                 <ProjectLogo className="w-14 drop-shadow-sm" />
@@ -159,10 +159,6 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                 <div className="space-y-3">
                                     <div className="space-y-2">
                                         <h3 className="text-3xl font-semibold tracking-tight text-slate-950">Welcome back</h3>
-                                        <p className="text-sm leading-6 text-slate-600">
-                                            Access your transport operations dashboard and continue managing reservations, fleet activity, and active
-                                            dispatches.
-                                        </p>
                                     </div>
                                 </div>
 

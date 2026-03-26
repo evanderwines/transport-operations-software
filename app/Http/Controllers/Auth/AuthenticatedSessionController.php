@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Laravel\Sanctum\PersonalAccessToken;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -43,14 +44,23 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $user = $request->user();
-        if ($user) {
-            $token = $user->currentAccessToken();
-            if ($token && method_exists($token, 'delete')) {
-                $token->delete();
-            }
+        $accessToken = $request->user()?->currentAccessToken();
+        if ($accessToken && method_exists($accessToken, 'delete')) {
+            $accessToken->delete();
         }
 
-        return redirect('/')->withCookie(cookie()->forget('auth_token'));
+        $cookieToken = $request->cookie('auth_token');
+        if ($cookieToken) {
+            PersonalAccessToken::findToken($cookieToken)?->delete();
+        }
+
+        Auth::guard('web')->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/')
+            ->withCookie(cookie()->forget('auth_token'))
+            ->withCookie(cookie()->forget(config('session.cookie')));
     }
 }

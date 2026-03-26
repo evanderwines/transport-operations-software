@@ -76,7 +76,7 @@ export default function Welcome() {
                 </header>
 
                 <main className="mx-auto grid max-w-7xl gap-10 px-6 pt-4 pb-14 lg:grid-cols-[1.15fr_0.85fr] lg:px-8 lg:pb-16">
-                    <section className="flex flex-col justify-center">
+                    <section className="flex flex-col justify-start">
 
                         <div className="mt-6 space-y-6">
                             <div className="space-y-4">

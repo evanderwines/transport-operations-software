@@ -7,10 +7,8 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
-use Inertia\Inertia;
 use Inertia\Response;
 
 class RegisteredUserController extends Controller
@@ -45,8 +43,18 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
+        $token = $user->createToken('web')->plainTextToken;
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()
+            ->intended(route('dashboard', absolute: false))
+            ->withCookie(cookie(
+                name: 'auth_token',
+                value: $token,
+                minutes: 120,
+                path: '/',
+                secure: true,
+                httpOnly: true,
+                sameSite: 'Lax',
+            ));
     }
 }
