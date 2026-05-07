@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class RegisteredUserController extends Controller
 {
@@ -44,6 +45,11 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
+        $cookieToken = $request->cookie('auth_token');
+        if ($cookieToken) {
+            PersonalAccessToken::findToken($cookieToken)?->delete();
+        }
+
         $token = $user->createToken('web')->plainTextToken;
 
         return redirect()
@@ -53,7 +59,7 @@ class RegisteredUserController extends Controller
                 value: $token,
                 minutes: 120,
                 path: '/',
-                secure: true,
+                secure: $request->isSecure(),
                 httpOnly: true,
                 sameSite: 'Lax',
             ));

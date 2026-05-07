@@ -26,6 +26,11 @@ Route::post('register', function (Request $request) {
 
     event(new Registered($user));
 
+    $cookieToken = $request->cookie('auth_token');
+    if ($cookieToken) {
+        PersonalAccessToken::findToken($cookieToken)?->delete();
+    }
+
     $token = $user->createToken('web')->plainTextToken;
 
     return response()
@@ -38,7 +43,7 @@ Route::post('register', function (Request $request) {
             value: $token,
             minutes: 120,
             path: '/',
-            secure: true,
+            secure: $request->isSecure(),
             httpOnly: true,
             sameSite: 'Lax'
         ));
@@ -60,6 +65,11 @@ Route::post('login', function (Request $request) {
         ]);
     }
 
+    $cookieToken = $request->cookie('auth_token');
+    if ($cookieToken) {
+        PersonalAccessToken::findToken($cookieToken)?->delete();
+    }
+
     $token = $user->createToken('web')->plainTextToken;
 
     return response()
@@ -72,7 +82,7 @@ Route::post('login', function (Request $request) {
             value: $token,
             minutes: $remember ? 43200 : 120,
             path: '/',
-            secure: true,
+            secure: $request->isSecure(),
             httpOnly: true,
             sameSite: 'Lax'
         ));
