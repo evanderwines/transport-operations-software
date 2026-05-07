@@ -185,9 +185,7 @@ return new class extends Migration
         }
 
         Schema::create('customers', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
-            $table->charset = 'latin1';
-            $table->collation = 'latin1_swedish_ci';
+
 
             $table->string('customer_id')->primary();
             $table->string('customer_name', 150);
@@ -204,9 +202,7 @@ return new class extends Migration
         }
 
         Schema::create('drivers', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
-            $table->charset = 'latin1';
-            $table->collation = 'latin1_swedish_ci';
+
 
             $table->string('driver_id', 20)->primary();
             $table->string('name', 100);
@@ -225,9 +221,7 @@ return new class extends Migration
         }
 
         Schema::create('vehicles', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
-            $table->charset = 'latin1';
-            $table->collation = 'latin1_swedish_ci';
+
 
             $table->string('vehicle_id', 20)->primary();
             $table->string('driver_id', 50);
@@ -247,9 +241,7 @@ return new class extends Migration
         }
 
         Schema::create('pricing', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
-            $table->charset = 'latin1';
-            $table->collation = 'latin1_swedish_ci';
+
 
             $table->string('pricing_id', 20)->primary();
             $table->string('service_type', 100);
@@ -266,9 +258,7 @@ return new class extends Migration
         }
 
         Schema::create('reservations', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
-            $table->charset = 'latin1';
-            $table->collation = 'latin1_swedish_ci';
+
 
             $table->string('reservation_id')->primary();
             $table->string('customer_id')->nullable()->index();
@@ -297,9 +287,7 @@ return new class extends Migration
         }
 
         Schema::create('dispatches', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
-            $table->charset = 'latin1';
-            $table->collation = 'latin1_swedish_ci';
+
 
             $table->string('reservation_id')->primary();
             $table->string('status', 50)->nullable();
@@ -338,9 +326,7 @@ return new class extends Migration
         }
 
         Schema::create('logs', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
-            $table->charset = 'latin1';
-            $table->collation = 'latin1_swedish_ci';
+
 
             $table->string('datelog', 50);
             $table->string('timelog', 50);
