@@ -41,11 +41,11 @@ class UsersSeeder extends Seeder
             [
                 'id' => 3,
                 'name' => 'Admin',
-                'email' => 'sample@admin',
+                'email' => 'sample@admin1',
                 'role' => 'ADMINISTRATOR',
                 'role_id' => null,
                 'email_verified_at' => null,
-                'password' => '$2y$12$18.WS6UOmFxaSxPyAKsB.eYEzAIwMLlPOAdfYPaSKG10.aGOAOQ4u',
+                'password' => '$2y$12$gVi.iC3EIeIFPzdeJEX1j.Mk.v4qfzvkKUrAM5lzH9YlVL2V0y202',
                 'remember_token' => null,
                 'created_at' => '2026-01-21 01:56:54',
                 'updated_at' => '2026-01-21 01:56:54',
