@@ -1,8 +1,8 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../wayfinder'
 /**
-* @see \App\Http\Controllers\SystemLogController::index
- * @see app/Http/Controllers/SystemLogController.php:11
- * @route '/logs'
+* @see \App\Http\Controllers\DashboardController::index
+ * @see app/Http/Controllers/DashboardController.php:19
+ * @route '/dashboard'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(options),
@@ -11,31 +11,31 @@ export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 index.definition = {
     methods: ["get","head"],
-    url: '/logs',
+    url: '/dashboard',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see \App\Http\Controllers\SystemLogController::index
- * @see app/Http/Controllers/SystemLogController.php:11
- * @route '/logs'
+* @see \App\Http\Controllers\DashboardController::index
+ * @see app/Http/Controllers/DashboardController.php:19
+ * @route '/dashboard'
  */
 index.url = (options?: RouteQueryOptions) => {
     return index.definition.url + queryParams(options)
 }
 
 /**
-* @see \App\Http\Controllers\SystemLogController::index
- * @see app/Http/Controllers/SystemLogController.php:11
- * @route '/logs'
+* @see \App\Http\Controllers\DashboardController::index
+ * @see app/Http/Controllers/DashboardController.php:19
+ * @route '/dashboard'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(options),
     method: 'get',
 })
 /**
-* @see \App\Http\Controllers\SystemLogController::index
- * @see app/Http/Controllers/SystemLogController.php:11
- * @route '/logs'
+* @see \App\Http\Controllers\DashboardController::index
+ * @see app/Http/Controllers/DashboardController.php:19
+ * @route '/dashboard'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(options),
@@ -43,9 +43,9 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
-* @see \App\Http\Controllers\SystemLogController::index
- * @see app/Http/Controllers/SystemLogController.php:11
- * @route '/logs'
+* @see \App\Http\Controllers\DashboardController::index
+ * @see app/Http/Controllers/DashboardController.php:19
+ * @route '/dashboard'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: index.url(options),
@@ -53,18 +53,18 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
-* @see \App\Http\Controllers\SystemLogController::index
- * @see app/Http/Controllers/SystemLogController.php:11
- * @route '/logs'
+* @see \App\Http\Controllers\DashboardController::index
+ * @see app/Http/Controllers/DashboardController.php:19
+ * @route '/dashboard'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: index.url(options),
             method: 'get',
         })
             /**
-* @see \App\Http\Controllers\SystemLogController::index
- * @see app/Http/Controllers/SystemLogController.php:11
- * @route '/logs'
+* @see \App\Http\Controllers\DashboardController::index
+ * @see app/Http/Controllers/DashboardController.php:19
+ * @route '/dashboard'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: index.url({
@@ -77,6 +77,6 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
     
     index.form = indexForm
-const SystemLogController = { index }
+const DashboardController = { index }
 
-export default SystemLogController
+export default DashboardController

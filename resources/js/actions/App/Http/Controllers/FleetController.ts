@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\FleetController::index
  * @see app/Http/Controllers/FleetController.php:16
@@ -42,6 +42,41 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     method: 'head',
 })
 
+    /**
+* @see \App\Http\Controllers\FleetController::index
+ * @see app/Http/Controllers/FleetController.php:16
+ * @route '/fleet/overview'
+ */
+    const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: index.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\FleetController::index
+ * @see app/Http/Controllers/FleetController.php:16
+ * @route '/fleet/overview'
+ */
+        indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: index.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\FleetController::index
+ * @see app/Http/Controllers/FleetController.php:16
+ * @route '/fleet/overview'
+ */
+        indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: index.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    index.form = indexForm
 /**
 * @see \App\Http\Controllers\FleetController::show
  * @see app/Http/Controllers/FleetController.php:33
@@ -104,6 +139,41 @@ show.head = (args: { vehicle_id: string | number } | [vehicle_id: string | numbe
     method: 'head',
 })
 
+    /**
+* @see \App\Http\Controllers\FleetController::show
+ * @see app/Http/Controllers/FleetController.php:33
+ * @route '/fleet/{vehicle_id}'
+ */
+    const showForm = (args: { vehicle_id: string | number } | [vehicle_id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: show.url(args, options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\FleetController::show
+ * @see app/Http/Controllers/FleetController.php:33
+ * @route '/fleet/{vehicle_id}'
+ */
+        showForm.get = (args: { vehicle_id: string | number } | [vehicle_id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: show.url(args, options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\FleetController::show
+ * @see app/Http/Controllers/FleetController.php:33
+ * @route '/fleet/{vehicle_id}'
+ */
+        showForm.head = (args: { vehicle_id: string | number } | [vehicle_id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: show.url(args, {
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    show.form = showForm
 /**
 * @see \App\Http\Controllers\FleetController::store
  * @see app/Http/Controllers/FleetController.php:58
@@ -137,6 +207,28 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
 })
+
+    /**
+* @see \App\Http\Controllers\FleetController::store
+ * @see app/Http/Controllers/FleetController.php:58
+ * @route '/fleet'
+ */
+    const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: store.url(options),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\FleetController::store
+ * @see app/Http/Controllers/FleetController.php:58
+ * @route '/fleet'
+ */
+        storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: store.url(options),
+            method: 'post',
+        })
+    
+    store.form = storeForm
 const FleetController = { index, show, store }
 
 export default FleetController

@@ -60,6 +60,13 @@ const navItems: SidebarNavItems = {
 		},
 
 		{
+			title: 'Announcements',
+			href: '/announcements',
+			icon: Bell,
+			roles: ["all"],
+		},
+
+		{
 			title: 'My Reservations',
 			href: '/my-reservations',
 			icon: CalendarDays,

@@ -1,7 +1,5 @@
 import { InertiaLinkProps } from '@inertiajs/react';
 import { LucideIcon } from 'lucide-react';
-import Reservations from '../pages/admin/reservations';
-
 
 export interface Auth {
     user: User;
@@ -22,7 +20,7 @@ export interface NavItem {
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon | null;
     isActive?: boolean;
-    roles: string[]
+    roles: string[];
 }
 
 export interface SidebarNavItems {
@@ -51,6 +49,30 @@ export interface User {
     [key: string]: unknown; // This allows for additional properties...
 }
 
+export interface Announcement {
+    announcement_id: string;
+    title: string;
+    summary: string;
+    description: string;
+    starts_at: string | null;
+    ends_at: string | null;
+    starts_at_input?: string | null;
+    ends_at_input?: string | null;
+    venue: string;
+    organizer: string | null;
+    audience: string;
+    status: string;
+    capacity: number | null;
+    registration_link: string | null;
+    contact_name: string | null;
+    contact_email: string | null;
+    is_featured: boolean;
+    published_at: string | null;
+    created_at: string | null;
+    updated_at: string | null;
+    creator_name?: string | null;
+    updater_name?: string | null;
+}
 
 export interface PaginationType<T> {
     current_page: number;
@@ -76,7 +98,6 @@ export interface ModalType {
     message: string;
 }
 
-
 export interface PaginationLink {
     url: string;
     label: string;
@@ -95,8 +116,8 @@ export interface Vehicle {
     updated_at: string;
 }
 
-import type { route as routeFn } from 'ziggy-js';
 import { LatLng } from 'leaflet';
+import type { route as routeFn } from 'ziggy-js';
 
 declare global {
     const route: typeof routeFn;
@@ -130,21 +151,21 @@ export interface NewReservation {
 }
 
 export interface GeocodeHit {
-    osm_id: number;              // OpenStreetMap ID of the feature
-    osm_type: string;            // "node", "way", or "relation"
-    osm_key: string;             // e.g. "place", "highway"
-    osm_value: string;           // e.g. "city", "residential"
-    country: string;             // Country name
-    countrycode: string;         // ISO country code (e.g. "PH")
-    state?: string;              // Optional state/region
-    city?: string;               // Optional city
+    osm_id: number; // OpenStreetMap ID of the feature
+    osm_type: string; // "node", "way", or "relation"
+    osm_key: string; // e.g. "place", "highway"
+    osm_value: string; // e.g. "city", "residential"
+    country: string; // Country name
+    countrycode: string; // ISO country code (e.g. "PH")
+    state?: string; // Optional state/region
+    city?: string; // Optional city
     quarter?: string;
     suburb?: string;
     neighbourhood?: string;
-    street?: string;             // Optional street
+    street?: string; // Optional street
     housenumber?: string;
-    postcode?: string;           // Optional postal code
-    name?: string;               // Display name of the location
+    postcode?: string; // Optional postal code
+    name?: string; // Display name of the location
     extent?: [number, number, number, number]; // Bounding box [minLon, minLat, maxLon, maxLat]
     point: LatLng;
 }
@@ -166,7 +187,6 @@ export interface Reservation {
     updated_at: string;
     dispatch: Dispatch;
 }
-
 
 export interface Dispatch {
     reservation_id: string;
@@ -199,7 +219,6 @@ export interface Vehicle {
     created_at: string;
     updated_at: string;
 }
-
 
 export interface VehicleLocation {
     vehicle_id: string;

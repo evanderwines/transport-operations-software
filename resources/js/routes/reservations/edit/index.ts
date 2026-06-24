@@ -1,7 +1,7 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\ReservationController::step
- * @see app/Http/Controllers/ReservationController.php:243
+ * @see app/Http/Controllers/ReservationController.php:270
  * @route '/reservations/{reservation_id}/edit/step/{step}'
  */
 export const step = (args: { reservation_id: string | number, step: string | number } | [reservation_id: string | number, step: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ step.definition = {
 
 /**
 * @see \App\Http\Controllers\ReservationController::step
- * @see app/Http/Controllers/ReservationController.php:243
+ * @see app/Http/Controllers/ReservationController.php:270
  * @route '/reservations/{reservation_id}/edit/step/{step}'
  */
 step.url = (args: { reservation_id: string | number, step: string | number } | [reservation_id: string | number, step: string | number ], options?: RouteQueryOptions) => {
@@ -42,7 +42,7 @@ step.url = (args: { reservation_id: string | number, step: string | number } | [
 
 /**
 * @see \App\Http\Controllers\ReservationController::step
- * @see app/Http/Controllers/ReservationController.php:243
+ * @see app/Http/Controllers/ReservationController.php:270
  * @route '/reservations/{reservation_id}/edit/step/{step}'
  */
 step.get = (args: { reservation_id: string | number, step: string | number } | [reservation_id: string | number, step: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -51,13 +51,49 @@ step.get = (args: { reservation_id: string | number, step: string | number } | [
 })
 /**
 * @see \App\Http\Controllers\ReservationController::step
- * @see app/Http/Controllers/ReservationController.php:243
+ * @see app/Http/Controllers/ReservationController.php:270
  * @route '/reservations/{reservation_id}/edit/step/{step}'
  */
 step.head = (args: { reservation_id: string | number, step: string | number } | [reservation_id: string | number, step: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: step.url(args, options),
     method: 'head',
 })
+
+    /**
+* @see \App\Http\Controllers\ReservationController::step
+ * @see app/Http/Controllers/ReservationController.php:270
+ * @route '/reservations/{reservation_id}/edit/step/{step}'
+ */
+    const stepForm = (args: { reservation_id: string | number, step: string | number } | [reservation_id: string | number, step: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: step.url(args, options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\ReservationController::step
+ * @see app/Http/Controllers/ReservationController.php:270
+ * @route '/reservations/{reservation_id}/edit/step/{step}'
+ */
+        stepForm.get = (args: { reservation_id: string | number, step: string | number } | [reservation_id: string | number, step: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: step.url(args, options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\ReservationController::step
+ * @see app/Http/Controllers/ReservationController.php:270
+ * @route '/reservations/{reservation_id}/edit/step/{step}'
+ */
+        stepForm.head = (args: { reservation_id: string | number, step: string | number } | [reservation_id: string | number, step: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: step.url(args, {
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    step.form = stepForm
 const edit = {
     step: Object.assign(step, step),
 }

@@ -55,6 +55,7 @@ require __DIR__.'/user.php';
 require __DIR__.'/reservations.php';
 require __DIR__.'/active-dispatches.php';
 require __DIR__.'/fleet.php';
+require __DIR__.'/announcements.php';
 require __DIR__.'/task.php';
 require __DIR__.'/logs.php';
 
