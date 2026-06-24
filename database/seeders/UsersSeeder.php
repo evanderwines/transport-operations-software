@@ -17,7 +17,7 @@ class UsersSeeder extends Seeder
             [
                 'id' => 1,
                 'name' => 'Evander Wines',
-                'email' => 'winesevander@gmail.com',
+                'email' => 'winesevander4@gmail.com',
                 'role' => 'ADMINISTRATOR',
                 'role_id' => '',
                 'email_verified_at' => null,
